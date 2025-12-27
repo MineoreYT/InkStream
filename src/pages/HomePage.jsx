@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mangadexApi } from '../services/mangadexApi';
 import { useNSFW } from '../contexts/NSFWContext';
-import MangaCard from '../components/MangaCard';
+import MangaTile from '../components/MangaTile';
 import NSFWWarning from '../components/NSFWWarning';
 import { Loader2, AlertCircle } from 'lucide-react';
 
@@ -127,7 +127,7 @@ const HomePage = () => {
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 lg:gap-8">
           {popularManga.map((manga) => (
-            <MangaCard key={manga.id} manga={manga} />
+            <MangaTile key={manga.id} manga={manga} />
           ))}
         </div>
       </section>

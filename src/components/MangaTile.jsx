@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
-const MangaCard = ({ manga }) => {
-  // Simple title extraction with better fallbacks
+const MangaTile = ({ manga }) => {
+  // Extract manga data
   const title = manga.attributes?.title?.en || 
                 manga.attributes?.title?.['ja-ro'] || 
                 manga.attributes?.title?.ja || 
@@ -14,24 +14,13 @@ const MangaCard = ({ manga }) => {
   const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
   const contentRating = manga.attributes?.contentRating || 'safe';
   
-  // Get cover art with proper debugging and fallback
+  // Handle cover art
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
   let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
   
-  // Debug logging to see what's happening (will remove after fix confirmed)
-  console.log('Manga title:', title);
-  console.log('Manga ID:', manga.id);
-  console.log('All relationships:', manga.relationships?.map(r => ({ type: r.type, hasAttributes: !!r.attributes })));
-  console.log('Cover art relationship:', coverArt);
-  
   if (coverArt?.attributes?.fileName) {
     const fileName = coverArt.attributes.fileName;
-    // Remove any existing extension and add the correct one
-    const baseFileName = fileName.replace(/\.[^/.]+$/, "");
-    coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${baseFileName}.256.jpg`;
-    console.log('Generated cover URL:', coverUrl);
-  } else {
-    console.log('No cover art fileName found for:', title);
+    coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
   }
 
   const getStatusColor = (status) => {
@@ -46,7 +35,7 @@ const MangaCard = ({ manga }) => {
 
   const getContentRatingBadge = (rating) => {
     switch (rating) {
-      case 'safe': return null; // No badge for safe content
+      case 'safe': return null;
       case 'suggestive': return { text: 'S', color: 'bg-yellow-500 text-white', title: 'Suggestive' };
       case 'erotica': return { text: '18+', color: 'bg-red-500 text-white', title: 'Erotica' };
       case 'pornographic': return { text: '🔞', color: 'bg-red-700 text-white', title: 'Pornographic' };
@@ -107,4 +96,4 @@ const MangaCard = ({ manga }) => {
   );
 };
 
-export default MangaCard;
+export default MangaTile;

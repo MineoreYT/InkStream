@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { mangadexApi } from '../services/mangadexApi';
 import { useNSFW } from '../contexts/NSFWContext';
-import MangaCard from '../components/MangaCard';
+import MangaTile from '../components/MangaTile';
 import { Loader2, AlertCircle, Clock } from 'lucide-react';
 
 const LatestPage = () => {
@@ -108,7 +108,7 @@ const LatestPage = () => {
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 lg:gap-8">
             {manga.map((mangaItem) => (
-              <MangaCard key={mangaItem.id} manga={mangaItem} />
+              <MangaTile key={mangaItem.id} manga={mangaItem} />
             ))}
           </div>
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNSFW } from '../contexts/NSFWContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { mangadexApi } from '../services/mangadexApi';
-import MangaCard from '../components/MangaCard';
+import MangaTile from '../components/MangaTile';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const NSFWPage = () => {
@@ -167,7 +167,7 @@ const NSFWPage = () => {
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {manga.map((item) => (
-              <MangaCard key={item.id} manga={item} />
+              <MangaTile key={item.id} manga={item} />
             ))}
           </div>
 

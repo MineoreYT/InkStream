@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { mangadexApi } from '../services/mangadexApi';
 import { useNSFW } from '../contexts/NSFWContext';
-import MangaCard from '../components/MangaCard';
+import MangaTile from '../components/MangaTile';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 const CategoryPage = () => {
@@ -118,7 +118,7 @@ const CategoryPage = () => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {manga.map((mangaItem) => (
-              <MangaCard key={mangaItem.id} manga={mangaItem} />
+              <MangaTile key={mangaItem.id} manga={mangaItem} />
             ))}
           </div>
 
