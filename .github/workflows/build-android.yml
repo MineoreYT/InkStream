@@ -29,7 +29,9 @@ jobs:
       uses: android-actions/setup-android@v3
       
     - name: Install dependencies
-      run: npm ci
+      run: |
+        rm -f package-lock.json
+        npm install
       
     - name: Build web app
       run: npm run build
