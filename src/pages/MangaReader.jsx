@@ -36,15 +36,27 @@ const MangaReader = () => {
         const currentIndex = chapters.findIndex(ch => ch.id === chapterId);
         setCurrentChapterIndex(currentIndex);
         
-        // Set pages
+        // Set pages with proxy for production
         if (pagesData.chapter && pagesData.chapter.data) {
           const baseUrl = pagesData.baseUrl;
           const chapterHash = pagesData.chapter.hash;
           const pageFiles = pagesData.chapter.data;
           
-          const pageUrls = pageFiles.map(filename => 
-            `${baseUrl}/data/${chapterHash}/${filename}`
-          );
+          // Check if we're in production
+          const isProduction = typeof window !== 'undefined' && 
+            (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+          
+          const pageUrls = pageFiles.map(filename => {
+            const directUrl = `${baseUrl}/data/${chapterHash}/${filename}`;
+            
+            if (isProduction) {
+              // In production, use image proxy to avoid anti-hotlinking
+              return `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=1200&h=1800&fit=inside&output=webp`;
+            } else {
+              // In development, use direct URL
+              return directUrl;
+            }
+          });
           
           setPages(pageUrls);
           setChapterInfo(pagesData.chapter);
@@ -288,7 +300,22 @@ const MangaReader = () => {
               maxHeight: 'none'
             } : {}}
             onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/800x1200/374151/9ca3af?text=Failed+to+Load+Page';
+              const img = e.target;
+              const currentSrc = img.src;
+              
+              // Try different proxy services if the current one fails
+              if (currentSrc.includes('weserv.nl')) {
+                // Try wsrv.nl proxy
+                const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
+                img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside`;
+              } else if (currentSrc.includes('wsrv.nl')) {
+                // Try direct URL as last resort
+                const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
+                img.src = originalUrl;
+              } else {
+                // Final fallback to placeholder
+                img.src = 'https://via.placeholder.com/800x1200/374151/9ca3af?text=Failed+to+Load+Page';
+              }
             }}
           />
         </div>
