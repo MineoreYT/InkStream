@@ -70,28 +70,17 @@ const MangaDetail = () => {
   const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
   const artist = manga.relationships?.find(rel => rel.type === 'artist')?.attributes?.name || 'Unknown Artist';
 
-  // Cover art handling with production/development detection
+  // Handle cover art with the EXACT same approach as MangaTile
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
-  
-  // Simple base64 placeholder that will always work
-  const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIENvdmVyPC90ZXh0Pjwvc3ZnPg==';
-  
-  let coverUrl = placeholderImage;
+  let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
   
   if (coverArt?.attributes?.fileName) {
     const fileName = coverArt.attributes.fileName;
     const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
     
-    console.log('Cover art data:', {
-      mangaId: manga.id,
-      fileName: fileName,
-      directUrl: directUrl
-    });
-    
-    // Check if we're in production (Vercel)
+    // Check if we're in production
     const isProduction = typeof window !== 'undefined' && 
-      (window.location.hostname.includes('vercel.app') || 
-       window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+      (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
     
     console.log('Environment check:', {
       hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
@@ -99,15 +88,51 @@ const MangaDetail = () => {
     });
     
     if (isProduction) {
-      // In production, use the public image proxy that works for MangaTile
-      console.log('Using production image proxy');
-      coverUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
+      // Try multiple public image proxy services (same as MangaTile)
+      const proxyServices = [
+        `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`,
+        `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`,
+        `https://imageproxy.pimg.tw/resize?url=${encodeURIComponent(directUrl)}&width=400`,
+        directUrl // Fallback to direct URL
+      ];
+      
+      coverUrl = proxyServices[0]; // Start with weserv.nl
+      console.log('Using production proxy:', coverUrl);
     } else {
-      // In development, try direct URL first
-      console.log('Using development direct URL');
+      // In development, use direct URL
       coverUrl = directUrl;
+      console.log('Using development direct URL:', coverUrl);
     }
   }
+
+  // Handle image loading errors with multiple fallbacks (same as MangaTile)
+  const handleImageError = (e) => {
+    const img = e.target;
+    const currentSrc = img.src;
+    
+    if (coverArt?.attributes?.fileName && !currentSrc.includes('placeholder')) {
+      const fileName = coverArt.attributes.fileName;
+      const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+      
+      // Try different proxy services in order (same as MangaTile)
+      if (currentSrc.includes('weserv.nl')) {
+        console.log('Trying wsrv proxy...');
+        img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
+      } else if (currentSrc.includes('wsrv.nl')) {
+        console.log('Trying pimg proxy...');
+        img.src = `https://imageproxy.pimg.tw/resize?url=${encodeURIComponent(directUrl)}&width=400`;
+      } else if (currentSrc.includes('pimg.tw')) {
+        console.log('Trying direct URL...');
+        img.src = directUrl; // Try direct URL
+      } else {
+        // Final fallback to placeholder (same as MangaTile)
+        console.log('Using placeholder fallback');
+        img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+      }
+    } else {
+      img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -128,33 +153,8 @@ const MangaDetail = () => {
             <img
               src={coverUrl}
               alt={title}
-              className="w-64 h-96 object-cover rounded-lg shadow-md bg-gray-200"
-              onError={(e) => {
-                console.log('Image failed to load:', e.target.src);
-                const img = e.target;
-                const currentSrc = img.src;
-                
-                if (coverArt?.attributes?.fileName && !currentSrc.includes('data:image')) {
-                  const fileName = coverArt.attributes.fileName;
-                  const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
-                  
-                  // Try different approaches in order
-                  if (currentSrc.includes('weserv.nl')) {
-                    console.log('Trying wsrv proxy...');
-                    img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
-                  } else if (currentSrc.includes('wsrv.nl')) {
-                    console.log('Trying direct URL...');
-                    img.src = directUrl;
-                  } else {
-                    // Final fallback to base64 placeholder
-                    console.log('Using base64 placeholder');
-                    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIENvdmVyPC90ZXh0Pjwvc3ZnPg==';
-                  }
-                } else {
-                  // Already using placeholder, don't retry
-                  console.log('Already using placeholder, stopping retries');
-                }
-              }}
+              className="w-64 h-96 object-cover rounded-lg shadow-md"
+              onError={handleImageError}
               onLoad={(e) => {
                 console.log('Image loaded successfully:', e.target.src);
               }}
