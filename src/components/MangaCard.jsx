@@ -26,7 +26,9 @@ const MangaCard = ({ manga }) => {
   
   if (coverArt?.attributes?.fileName) {
     const fileName = coverArt.attributes.fileName;
-    coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`;
+    // Remove any existing extension and add the correct one
+    const baseFileName = fileName.replace(/\.[^/.]+$/, "");
+    coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${baseFileName}.256.jpg`;
     console.log('Generated cover URL:', coverUrl);
   } else {
     console.log('No cover art fileName found for:', title);
