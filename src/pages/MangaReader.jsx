@@ -20,6 +20,7 @@ const MangaReader = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setCurrentPage(0); // Reset to first page when chapter changes
         
         // Fetch chapters list and current chapter pages
         const [chaptersData, pagesData] = await Promise.all([

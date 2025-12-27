@@ -70,7 +70,7 @@ const MangaDetail = () => {
   const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
   const artist = manga.relationships?.find(rel => rel.type === 'artist')?.attributes?.name || 'Unknown Artist';
 
-  // Handle cover art with the EXACT same approach as MangaTile
+  // EXACT COPY of MangaTile cover art logic
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
   let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
   
@@ -82,13 +82,8 @@ const MangaDetail = () => {
     const isProduction = typeof window !== 'undefined' && 
       (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
     
-    console.log('Environment check:', {
-      hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
-      isProduction: isProduction
-    });
-    
     if (isProduction) {
-      // Try multiple public image proxy services (same as MangaTile)
+      // Try multiple public image proxy services
       const proxyServices = [
         `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`,
         `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`,
@@ -97,15 +92,13 @@ const MangaDetail = () => {
       ];
       
       coverUrl = proxyServices[0]; // Start with weserv.nl
-      console.log('Using production proxy:', coverUrl);
     } else {
       // In development, use direct URL
       coverUrl = directUrl;
-      console.log('Using development direct URL:', coverUrl);
     }
   }
 
-  // Handle image loading errors with multiple fallbacks (same as MangaTile)
+  // EXACT COPY of MangaTile error handling
   const handleImageError = (e) => {
     const img = e.target;
     const currentSrc = img.src;
@@ -114,19 +107,15 @@ const MangaDetail = () => {
       const fileName = coverArt.attributes.fileName;
       const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
       
-      // Try different proxy services in order (same as MangaTile)
+      // Try different proxy services in order
       if (currentSrc.includes('weserv.nl')) {
-        console.log('Trying wsrv proxy...');
         img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
       } else if (currentSrc.includes('wsrv.nl')) {
-        console.log('Trying pimg proxy...');
         img.src = `https://imageproxy.pimg.tw/resize?url=${encodeURIComponent(directUrl)}&width=400`;
       } else if (currentSrc.includes('pimg.tw')) {
-        console.log('Trying direct URL...');
         img.src = directUrl; // Try direct URL
       } else {
-        // Final fallback to placeholder (same as MangaTile)
-        console.log('Using placeholder fallback');
+        // Final fallback to placeholder
         img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
       }
     } else {
@@ -155,9 +144,7 @@ const MangaDetail = () => {
               alt={title}
               className="w-64 h-96 object-cover rounded-lg shadow-md"
               onError={handleImageError}
-              onLoad={(e) => {
-                console.log('Image loaded successfully:', e.target.src);
-              }}
+              loading="lazy"
             />
           </div>
 
