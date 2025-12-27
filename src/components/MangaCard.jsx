@@ -18,9 +18,18 @@ const MangaCard = ({ manga }) => {
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
   let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
   
+  // Debug logging to see what's happening
+  console.log('Manga title:', title);
+  console.log('Manga ID:', manga.id);
+  console.log('All relationships:', manga.relationships?.map(r => ({ type: r.type, hasAttributes: !!r.attributes })));
+  console.log('Cover art relationship:', coverArt);
+  
   if (coverArt?.attributes?.fileName) {
     const fileName = coverArt.attributes.fileName;
     coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`;
+    console.log('Generated cover URL:', coverUrl);
+  } else {
+    console.log('No cover art fileName found for:', title);
   }
 
   const getStatusColor = (status) => {
