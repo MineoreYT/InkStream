@@ -70,7 +70,7 @@ const MangaDetail = () => {
   const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
   const artist = manga.relationships?.find(rel => rel.type === 'artist')?.attributes?.name || 'Unknown Artist';
 
-  // Cover art handling with debugging
+  // Cover art handling with production/development detection
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
   
   // Simple base64 placeholder that will always work
@@ -88,8 +88,17 @@ const MangaDetail = () => {
       directUrl: directUrl
     });
     
-    // Try the direct URL first for localhost
-    coverUrl = directUrl;
+    // Check if we're in production
+    const isProduction = typeof window !== 'undefined' && 
+      (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+    
+    if (isProduction) {
+      // In production, use the public image proxy that works for MangaTile
+      coverUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
+    } else {
+      // In development, try direct URL first
+      coverUrl = directUrl;
+    }
   }
 
   const getStatusColor = (status) => {
@@ -122,14 +131,12 @@ const MangaDetail = () => {
                   const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
                   
                   // Try different approaches in order
-                  if (currentSrc === directUrl) {
-                    // If direct URL failed, try weserv proxy
-                    console.log('Trying weserv proxy...');
-                    img.src = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=300&h=400&fit=cover`;
-                  } else if (currentSrc.includes('weserv.nl')) {
-                    // If weserv failed, try wsrv proxy
+                  if (currentSrc.includes('weserv.nl')) {
                     console.log('Trying wsrv proxy...');
-                    img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=300&h=400&fit=cover`;
+                    img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
+                  } else if (currentSrc.includes('wsrv.nl')) {
+                    console.log('Trying direct URL...');
+                    img.src = directUrl;
                   } else {
                     // Final fallback to base64 placeholder
                     console.log('Using base64 placeholder');
