@@ -88,15 +88,23 @@ const MangaDetail = () => {
       directUrl: directUrl
     });
     
-    // Check if we're in production
+    // Check if we're in production (Vercel)
     const isProduction = typeof window !== 'undefined' && 
-      (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+      (window.location.hostname.includes('vercel.app') || 
+       window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+    
+    console.log('Environment check:', {
+      hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
+      isProduction: isProduction
+    });
     
     if (isProduction) {
       // In production, use the public image proxy that works for MangaTile
+      console.log('Using production image proxy');
       coverUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
     } else {
       // In development, try direct URL first
+      console.log('Using development direct URL');
       coverUrl = directUrl;
     }
   }
