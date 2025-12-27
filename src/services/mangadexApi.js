@@ -1,11 +1,38 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://api.mangadex.org';
+// Check if we're in production (deployed)
+const isProduction = typeof window !== 'undefined' && 
+  (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+
+const BASE_URL = isProduction ? '/api/manga' : 'https://api.mangadex.org';
 
 const api = axios.create({
-  baseURL: BASE_URL,
-  timeout: 10000,
+  timeout: 15000,
 });
+
+// Helper function to make API requests
+const makeApiRequest = async (endpoint, params = {}) => {
+  if (isProduction) {
+    // In production, use our proxy
+    const mangadexUrl = `https://api.mangadex.org${endpoint}`;
+    const urlWithParams = new URL(mangadexUrl);
+    
+    // Add query parameters
+    Object.entries(params).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => urlWithParams.searchParams.append(key, v));
+      } else {
+        urlWithParams.searchParams.append(key, value);
+      }
+    });
+    
+    const proxyUrl = `/api/manga?url=${encodeURIComponent(urlWithParams.toString())}`;
+    return await api.get(proxyUrl);
+  } else {
+    // In development, make direct requests
+    return await api.get(`https://api.mangadex.org${endpoint}`, { params });
+  }
+};
 
 // Add request interceptor for debugging
 api.interceptors.request.use(
@@ -35,16 +62,16 @@ export const mangadexApi = {
         ? ['safe', 'suggestive', 'erotica', 'pornographic']
         : ['safe', 'suggestive'];
         
-      const response = await api.get('/manga', {
-        params: {
-          limit,
-          offset,
-          'order[followedCount]': 'desc',
-          'includes[]': ['cover_art', 'author', 'artist'],
-          'contentRating[]': contentRatings,
-          'availableTranslatedLanguage[]': 'en',
-        },
-      });
+      const params = {
+        limit,
+        offset,
+        'order[followedCount]': 'desc',
+        'includes[]': ['cover_art', 'author', 'artist'],
+        'contentRating[]': contentRatings,
+        'availableTranslatedLanguage[]': 'en',
+      };
+
+      const response = await makeApiRequest('/manga', params);
       return response.data;
     } catch (error) {
       console.error('API Error:', error);
@@ -59,16 +86,16 @@ export const mangadexApi = {
         ? ['safe', 'suggestive', 'erotica', 'pornographic']
         : ['safe', 'suggestive'];
         
-      const response = await api.get('/manga', {
-        params: {
-          limit,
-          offset,
-          'order[latestUploadedChapter]': 'desc',
-          'includes[]': ['cover_art', 'author', 'artist'],
-          'contentRating[]': contentRatings,
-          'availableTranslatedLanguage[]': 'en',
-        },
-      });
+      const params = {
+        limit,
+        offset,
+        'order[latestUploadedChapter]': 'desc',
+        'includes[]': ['cover_art', 'author', 'artist'],
+        'contentRating[]': contentRatings,
+        'availableTranslatedLanguage[]': 'en',
+      };
+
+      const response = await makeApiRequest('/manga', params);
       return response.data;
     } catch (error) {
       console.error('API Error:', error);
@@ -84,7 +111,7 @@ export const mangadexApi = {
         : ['safe', 'suggestive'];
         
       // First get all tags to find the correct tag ID
-      const tagsResponse = await api.get('/manga/tag');
+      const tagsResponse = await makeApiRequest('/manga/tag', {});
       const tags = tagsResponse.data.data || [];
       
       // Find the tag by name (case insensitive)
@@ -97,28 +124,26 @@ export const mangadexApi = {
       
       if (!foundTag) {
         // If tag not found, try searching by title instead
-        const response = await api.get('/manga', {
-          params: {
-            limit,
-            offset,
-            title: tag,
-            'includes[]': ['cover_art', 'author', 'artist'],
-            'contentRating[]': contentRatings,
-          },
-        });
+        const params = {
+          limit,
+          offset,
+          title: tag,
+          'includes[]': ['cover_art', 'author', 'artist'],
+          'contentRating[]': contentRatings,
+        };
+        const response = await makeApiRequest('/manga', params);
         return response.data;
       }
       
       // Use the found tag ID
-      const response = await api.get('/manga', {
-        params: {
-          limit,
-          offset,
-          'includedTags[]': foundTag.id,
-          'includes[]': ['cover_art', 'author', 'artist'],
-          'contentRating[]': contentRatings,
-        },
-      });
+      const params = {
+        limit,
+        offset,
+        'includedTags[]': foundTag.id,
+        'includes[]': ['cover_art', 'author', 'artist'],
+        'contentRating[]': contentRatings,
+      };
+      const response = await makeApiRequest('/manga', params);
       return response.data;
     } catch (error) {
       console.error('API Error:', error);
@@ -129,11 +154,10 @@ export const mangadexApi = {
   // Get manga details
   getMangaById: async (id) => {
     try {
-      const response = await api.get(`/manga/${id}`, {
-        params: {
-          'includes[]': ['cover_art', 'author', 'artist'],
-        },
-      });
+      const params = {
+        'includes[]': ['cover_art', 'author', 'artist'],
+      };
+      const response = await makeApiRequest(`/manga/${id}`, params);
       return response.data;
     } catch (error) {
       throw new Error('Failed to fetch manga details');
@@ -143,16 +167,15 @@ export const mangadexApi = {
   // Get manga chapters
   getMangaChapters: async (mangaId, limit = 100, offset = 0) => {
     try {
-      const response = await api.get('/chapter', {
-        params: {
-          manga: mangaId,
-          limit,
-          offset,
-          'order[chapter]': 'asc',
-          'translatedLanguage[]': 'en',
-          'includes[]': ['scanlation_group'],
-        },
-      });
+      const params = {
+        manga: mangaId,
+        limit,
+        offset,
+        'order[chapter]': 'asc',
+        'translatedLanguage[]': 'en',
+        'includes[]': ['scanlation_group'],
+      };
+      const response = await makeApiRequest('/chapter', params);
       return response.data;
     } catch (error) {
       throw new Error('Failed to fetch manga chapters');
@@ -162,7 +185,7 @@ export const mangadexApi = {
   // Get chapter pages
   getChapterPages: async (chapterId) => {
     try {
-      const response = await api.get(`/at-home/server/${chapterId}`);
+      const response = await makeApiRequest(`/at-home/server/${chapterId}`, {});
       return response.data;
     } catch (error) {
       throw new Error('Failed to fetch chapter pages');
@@ -176,15 +199,14 @@ export const mangadexApi = {
         ? ['safe', 'suggestive', 'erotica', 'pornographic']
         : ['safe', 'suggestive'];
         
-      const response = await api.get('/manga', {
-        params: {
-          title: query,
-          limit,
-          offset,
-          'includes[]': ['cover_art', 'author', 'artist'],
-          'contentRating[]': contentRatings,
-        },
-      });
+      const params = {
+        title: query,
+        limit,
+        offset,
+        'includes[]': ['cover_art', 'author', 'artist'],
+        'contentRating[]': contentRatings,
+      };
+      const response = await makeApiRequest('/manga', params);
       return response.data;
     } catch (error) {
       throw new Error('Failed to search manga');
@@ -194,7 +216,7 @@ export const mangadexApi = {
   // Get all tags
   getTags: async () => {
     try {
-      const response = await api.get('/manga/tag');
+      const response = await makeApiRequest('/manga/tag', {});
       return response.data;
     } catch (error) {
       throw new Error('Failed to fetch tags');
@@ -204,16 +226,15 @@ export const mangadexApi = {
   // Get NSFW manga only
   getNSFWManga: async (limit = 20, offset = 0) => {
     try {
-      const response = await api.get('/manga', {
-        params: {
-          limit,
-          offset,
-          'order[followedCount]': 'desc',
-          'includes[]': ['cover_art', 'author', 'artist'],
-          'contentRating[]': ['erotica', 'pornographic'],
-          'availableTranslatedLanguage[]': 'en',
-        },
-      });
+      const params = {
+        limit,
+        offset,
+        'order[followedCount]': 'desc',
+        'includes[]': ['cover_art', 'author', 'artist'],
+        'contentRating[]': ['erotica', 'pornographic'],
+        'availableTranslatedLanguage[]': 'en',
+      };
+      const response = await makeApiRequest('/manga', params);
       return response.data;
     } catch (error) {
       console.error('API Error:', error);
