@@ -15,51 +15,51 @@
   "dir": "ltr",
   "icons": [
     {
-      "src": "/favicon.webp",
+      "src": "/icon-192x192.png",
       "sizes": "72x72",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/favicon.webp",
+      "src": "/icon-192x192.png",
       "sizes": "96x96",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/favicon.webp",
+      "src": "/icon-192x192.png",
       "sizes": "128x128",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/favicon.webp",
+      "src": "/icon-192x192.png",
       "sizes": "144x144",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/favicon.webp",
+      "src": "/icon-192x192.png",
       "sizes": "152x152",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/favicon.webp",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/favicon.webp",
+      "src": "/icon-512x512.png",
       "sizes": "384x384",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/favicon.webp",
+      "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable any"
     }
   ],
@@ -85,9 +85,9 @@
       "url": "/popular",
       "icons": [
         {
-          "src": "/favicon.webp",
+          "src": "/icon-192x192.png",
           "sizes": "96x96",
-          "type": "image/webp"
+          "type": "image/png"
         }
       ]
     },
@@ -98,9 +98,9 @@
       "url": "/latest",
       "icons": [
         {
-          "src": "/favicon.webp",
+          "src": "/icon-192x192.png",
           "sizes": "96x96",
-          "type": "image/webp"
+          "type": "image/png"
         }
       ]
     }
