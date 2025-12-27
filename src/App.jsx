@@ -4,6 +4,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { NSFWProvider } from './contexts/NSFWContext';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
+import InstallPrompt from './components/InstallPrompt';
 import HomePage from './pages/HomePage';
 import MangaDetail from './pages/MangaDetail';
 import MangaReader from './pages/MangaReader';
@@ -62,6 +63,9 @@ function App() {
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </div>
+                  
+                  {/* PWA Install Prompt */}
+                  <InstallPrompt />
                 </main>
               </div>
             } />
