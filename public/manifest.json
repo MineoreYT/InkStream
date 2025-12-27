@@ -15,49 +15,49 @@
   "dir": "ltr",
   "icons": [
     {
-      "src": "/InkStream.webp",
+      "src": "/favicon.webp",
       "sizes": "72x72",
       "type": "image/webp",
       "purpose": "maskable any"
     },
     {
-      "src": "/InkStream.webp",
+      "src": "/favicon.webp",
       "sizes": "96x96",
       "type": "image/webp",
       "purpose": "maskable any"
     },
     {
-      "src": "/InkStream.webp",
+      "src": "/favicon.webp",
       "sizes": "128x128",
       "type": "image/webp",
       "purpose": "maskable any"
     },
     {
-      "src": "/InkStream.webp",
+      "src": "/favicon.webp",
       "sizes": "144x144",
       "type": "image/webp",
       "purpose": "maskable any"
     },
     {
-      "src": "/InkStream.webp",
+      "src": "/favicon.webp",
       "sizes": "152x152",
       "type": "image/webp",
       "purpose": "maskable any"
     },
     {
-      "src": "/InkStream.webp",
+      "src": "/favicon.webp",
       "sizes": "192x192",
       "type": "image/webp",
       "purpose": "maskable any"
     },
     {
-      "src": "/InkStream.webp",
+      "src": "/favicon.webp",
       "sizes": "384x384",
       "type": "image/webp",
       "purpose": "maskable any"
     },
     {
-      "src": "/InkStream.webp",
+      "src": "/favicon.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "maskable any"
@@ -85,7 +85,7 @@
       "url": "/popular",
       "icons": [
         {
-          "src": "/InkStream.webp",
+          "src": "/favicon.webp",
           "sizes": "96x96",
           "type": "image/webp"
         }
@@ -98,7 +98,7 @@
       "url": "/latest",
       "icons": [
         {
-          "src": "/InkStream.webp",
+          "src": "/favicon.webp",
           "sizes": "96x96",
           "type": "image/webp"
         }
