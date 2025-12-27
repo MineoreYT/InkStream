@@ -2,6 +2,9 @@
   "functions": {
     "api/manga.js": {
       "maxDuration": 30
+    },
+    "api/image-proxy.js": {
+      "maxDuration": 30
     }
   },
   "headers": [

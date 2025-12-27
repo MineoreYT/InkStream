@@ -14,13 +14,25 @@ const MangaTile = ({ manga }) => {
   const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
   const contentRating = manga.attributes?.contentRating || 'safe';
   
-  // Handle cover art
+  // Handle cover art with environment-specific logic
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
   let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
   
   if (coverArt?.attributes?.fileName) {
     const fileName = coverArt.attributes.fileName;
-    coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+    const directUrl = `https://uploads.mangadx.org/covers/${manga.id}/${fileName}`;
+    
+    // Check if we're in production (Vercel)
+    const isProduction = typeof window !== 'undefined' && 
+      (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+    
+    if (isProduction) {
+      // In production, use our image proxy
+      coverUrl = `/api/image-proxy?url=${encodeURIComponent(directUrl)}`;
+    } else {
+      // In development, use direct URL
+      coverUrl = directUrl;
+    }
   }
 
   const getStatusColor = (status) => {
@@ -52,7 +64,10 @@ const MangaTile = ({ manga }) => {
             alt={title}
             className="w-full h-48 sm:h-64 lg:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
             onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+              // If image fails to load, try fallback or show placeholder
+              if (!e.target.src.includes('placeholder')) {
+                e.target.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+              }
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
