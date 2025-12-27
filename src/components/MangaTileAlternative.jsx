@@ -14,31 +14,28 @@ const MangaTile = ({ manga }) => {
   const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
   const contentRating = manga.attributes?.contentRating || 'safe';
   
-  // Handle cover art with multiple fallback strategies
+  // Handle cover art with multiple MangaDx endpoints and public proxies
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
   let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
   
   if (coverArt?.attributes?.fileName) {
     const fileName = coverArt.attributes.fileName;
-    const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+    const mangaId = manga.id;
     
     // Check if we're in production
     const isProduction = typeof window !== 'undefined' && 
       (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
     
     if (isProduction) {
-      // Try multiple public image proxy services
-      const proxyServices = [
-        `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`,
-        `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`,
-        `https://imageproxy.pimg.tw/resize?url=${encodeURIComponent(directUrl)}&width=400`,
-        directUrl // Fallback to direct URL
-      ];
+      // For production, use public image proxy with the best MangaDx endpoint
+      const baseFileName = fileName.replace(/\.[^/.]+$/, "");
+      const directUrl = `https://uploads.mangadx.org/covers/${mangaId}/${baseFileName}.256.jpg`;
       
-      coverUrl = proxyServices[0]; // Start with weserv.nl
+      // Use weserv.nl as it's very reliable
+      coverUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=300&h=400&fit=cover&output=webp`;
     } else {
-      // In development, use direct URL
-      coverUrl = directUrl;
+      // In development, try the original filename first
+      coverUrl = `https://uploads.mangadx.org/covers/${mangaId}/${fileName}`;
     }
   }
 
@@ -62,24 +59,31 @@ const MangaTile = ({ manga }) => {
     }
   };
 
-  // Handle image loading errors with multiple fallbacks
+  // Handle image loading errors with comprehensive fallbacks
   const handleImageError = (e) => {
     const img = e.target;
     const currentSrc = img.src;
     
     if (coverArt?.attributes?.fileName && !currentSrc.includes('placeholder')) {
       const fileName = coverArt.attributes.fileName;
-      const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+      const mangaId = manga.id;
+      const baseFileName = fileName.replace(/\.[^/.]+$/, "");
       
-      // Try different proxy services in order
+      // Try different strategies based on current URL
       if (currentSrc.includes('weserv.nl')) {
-        img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
+        // Try different MangaDx endpoint with different proxy
+        const altUrl = `https://uploads.mangadx.org/covers/${mangaId}/${fileName}`;
+        img.src = `https://wsrv.nl/?url=${encodeURIComponent(altUrl)}&w=300&h=400&fit=cover`;
       } else if (currentSrc.includes('wsrv.nl')) {
-        img.src = `https://imageproxy.pimg.tw/resize?url=${encodeURIComponent(directUrl)}&width=400`;
-      } else if (currentSrc.includes('pimg.tw')) {
-        img.src = directUrl; // Try direct URL
+        // Try .512.jpg version
+        const url512 = `https://uploads.mangadx.org/covers/${mangaId}/${baseFileName}.512.jpg`;
+        img.src = `https://images.weserv.nl/?url=${encodeURIComponent(url512)}&w=300&h=400&fit=cover`;
+      } else if (currentSrc.includes('512.jpg')) {
+        // Try original filename
+        const originalUrl = `https://uploads.mangadx.org/covers/${mangaId}/${fileName}`;
+        img.src = originalUrl;
       } else {
-        // Final fallback to placeholder
+        // Final fallback
         img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
       }
     } else {
