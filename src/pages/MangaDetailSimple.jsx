@@ -70,26 +70,17 @@ const MangaDetail = () => {
   const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
   const artist = manga.relationships?.find(rel => rel.type === 'artist')?.attributes?.name || 'Unknown Artist';
 
-  // Cover art handling with debugging
+  // Simple cover art handling - always use placeholder for now to test
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
+  let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=Cover+Loading';
   
-  // Simple base64 placeholder that will always work
-  const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIENvdmVyPC90ZXh0Pjwvc3ZnPg==';
-  
-  let coverUrl = placeholderImage;
-  
+  // Try the same approach that works for MangaTile
   if (coverArt?.attributes?.fileName) {
     const fileName = coverArt.attributes.fileName;
-    const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+    const directUrl = `https://uploads.mangadx.org/covers/${manga.id}/${fileName}`;
     
-    console.log('Cover art data:', {
-      mangaId: manga.id,
-      fileName: fileName,
-      directUrl: directUrl
-    });
-    
-    // Try the direct URL first for localhost
-    coverUrl = directUrl;
+    // Always use the public proxy that works for MangaTile
+    coverUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=300&h=400&fit=cover`;
   }
 
   const getStatusColor = (status) => {
@@ -114,31 +105,7 @@ const MangaDetail = () => {
               className="w-64 h-96 object-cover rounded-lg shadow-md bg-gray-200"
               onError={(e) => {
                 console.log('Image failed to load:', e.target.src);
-                const img = e.target;
-                const currentSrc = img.src;
-                
-                if (coverArt?.attributes?.fileName && !currentSrc.includes('data:image')) {
-                  const fileName = coverArt.attributes.fileName;
-                  const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
-                  
-                  // Try different approaches in order
-                  if (currentSrc === directUrl) {
-                    // If direct URL failed, try weserv proxy
-                    console.log('Trying weserv proxy...');
-                    img.src = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=300&h=400&fit=cover`;
-                  } else if (currentSrc.includes('weserv.nl')) {
-                    // If weserv failed, try wsrv proxy
-                    console.log('Trying wsrv proxy...');
-                    img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=300&h=400&fit=cover`;
-                  } else {
-                    // Final fallback to base64 placeholder
-                    console.log('Using base64 placeholder');
-                    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIENvdmVyPC90ZXh0Pjwvc3ZnPg==';
-                  }
-                } else {
-                  // Already using placeholder, don't retry
-                  console.log('Already using placeholder, stopping retries');
-                }
+                e.target.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
               }}
               onLoad={(e) => {
                 console.log('Image loaded successfully:', e.target.src);

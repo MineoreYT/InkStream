@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     const imageUrl = decodeURIComponent(url);
     
     // Only allow MangaDx image URLs for security
-    if (!imageUrl.startsWith('https://uploads.mangadx.org/')) {
+    if (!imageUrl.startsWith('https://uploads.mangadex.org/')) {
       res.status(400).json({ error: 'Invalid image URL' });
       return;
     }
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     const imageResponse = await fetch(imageUrl, {
       headers: {
         'User-Agent': 'InkStream/1.0 (https://ink-stream-pearl.vercel.app)',
-        'Referer': 'https://mangadx.org/',
+        'Referer': 'https://mangadex.org/',
       },
     });
 
