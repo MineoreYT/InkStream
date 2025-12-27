@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Star, Calendar, User } from 'lucide-react';
 
 const MangaCard = ({ manga }) => {
   // Simple title extraction with better fallbacks
@@ -15,11 +14,14 @@ const MangaCard = ({ manga }) => {
   const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
   const contentRating = manga.attributes?.contentRating || 'safe';
   
-  // Get cover art
+  // Get cover art with proper debugging and fallback
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
-  const coverUrl = coverArt?.attributes?.fileName 
-    ? `https://uploads.mangadex.org/covers/${manga.id}/${coverArt.attributes.fileName}.512.jpg`
-    : null;
+  let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+  
+  if (coverArt?.attributes?.fileName) {
+    const fileName = coverArt.attributes.fileName;
+    coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`;
+  }
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -86,10 +88,6 @@ const MangaCard = ({ manga }) => {
             <div className="flex items-center space-x-1 sm:space-x-2">
               <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-primary rounded-full"></div>
               <span className="text-xs font-medium text-gray-500">READ NOW</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Star className="h-3 sm:h-4 w-3 sm:w-4 text-yellow-400 fill-current" />
-              <span className="text-xs sm:text-sm font-medium text-gray-700">4.5</span>
             </div>
           </div>
         </div>
