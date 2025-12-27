@@ -51,47 +51,45 @@ const MangaDetail = () => {
         <div className="text-center">
           <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-4" />
           <p className="text-red-600 mb-2">Error loading manga details</p>
-          <p className="text-gray-600 text-sm">{error}</p>
+          <p className="text-gray-600 text-sm">{error || 'Manga not found'}</p>
         </div>
       </div>
     );
   }
 
-  const getTitle = (titleObj) => {
-    if (!titleObj) return 'Unknown Title';
-    
-    // Try different language codes in order of preference
-    const languages = ['en', 'ja', 'ja-ro', 'ko', 'zh', 'zh-hk'];
-    
-    for (const lang of languages) {
-      if (titleObj[lang] && titleObj[lang].trim()) {
-        return titleObj[lang].trim();
-      }
-    }
-    
-    // If no preferred language found, get the first available title
-    const availableTitles = Object.values(titleObj).filter(title => title && title.trim());
-    return availableTitles.length > 0 ? availableTitles[0].trim() : 'Unknown Title';
-  };
+  // Extract manga data
+  const title = manga.attributes?.title?.en || 
+                manga.attributes?.title?.['ja-ro'] || 
+                manga.attributes?.title?.ja || 
+                Object.values(manga.attributes?.title || {})[0] || 
+                'Untitled Manga';
 
-  const title = getTitle(manga.attributes?.title);
-  const description = manga.attributes?.description?.en || 
-                     manga.attributes?.description?.ja || 
-                     Object.values(manga.attributes?.description || {})[0] || 
-                     'No description available';
+  const description = manga.attributes?.description?.en || 'No description available';
   const status = manga.attributes?.status || 'unknown';
   const year = manga.attributes?.year;
-  const tags = manga.attributes?.tags || [];
-  
-  const authorRel = manga.relationships?.find(rel => rel.type === 'author');
-  const artistRel = manga.relationships?.find(rel => rel.type === 'artist');
-  const author = authorRel?.attributes?.name || 'Unknown Author';
-  const artist = artistRel?.attributes?.name || 'Unknown Artist';
-  
+  const author = manga.relationships?.find(rel => rel.type === 'author')?.attributes?.name || 'Unknown Author';
+  const artist = manga.relationships?.find(rel => rel.type === 'artist')?.attributes?.name || 'Unknown Artist';
+
+  // Handle cover art with the same approach as MangaTile
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
-  const coverUrl = coverArt 
-    ? `https://uploads.mangadex.org/covers/${manga.id}/${coverArt.attributes?.fileName}`
-    : '/placeholder-manga.jpg';
+  let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+  
+  if (coverArt?.attributes?.fileName) {
+    const fileName = coverArt.attributes.fileName;
+    const directUrl = `https://uploads.mangadx.org/covers/${manga.id}/${fileName}`;
+    
+    // Check if we're in production
+    const isProduction = typeof window !== 'undefined' && 
+      (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+    
+    if (isProduction) {
+      // In production, use public image proxy
+      coverUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover&output=webp`;
+    } else {
+      // In development, use direct URL
+      coverUrl = directUrl;
+    }
+  }
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -100,6 +98,29 @@ const MangaDetail = () => {
       case 'hiatus': return 'bg-yellow-100 text-yellow-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Handle image loading errors with fallbacks
+  const handleImageError = (e) => {
+    const img = e.target;
+    const currentSrc = img.src;
+    
+    if (coverArt?.attributes?.fileName && !currentSrc.includes('placeholder')) {
+      const fileName = coverArt.attributes.fileName;
+      const directUrl = `https://uploads.mangadx.org/covers/${manga.id}/${fileName}`;
+      
+      // Try different proxy services in order
+      if (currentSrc.includes('weserv.nl')) {
+        img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
+      } else if (currentSrc.includes('wsrv.nl')) {
+        img.src = directUrl; // Try direct URL
+      } else {
+        // Final fallback to placeholder
+        img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+      }
+    } else {
+      img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
     }
   };
 
@@ -113,90 +134,84 @@ const MangaDetail = () => {
               src={coverUrl}
               alt={title}
               className="w-64 h-96 object-cover rounded-lg shadow-md"
-              onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
-              }}
+              onError={handleImageError}
+              loading="lazy"
             />
           </div>
-          
+
           <div className="flex-1">
             <div className="flex items-start justify-between mb-4">
               <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
-                {status}
+                {status.charAt(0).toUpperCase() + status.slice(1)}
               </span>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="flex items-center space-x-2 text-gray-600">
-                <User className="h-5 w-5" />
-                <span>Author: {author}</span>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="flex items-center text-gray-600">
+                <User className="h-5 w-5 mr-2" />
+                <span className="text-sm">
+                  <strong>Author:</strong> {author}
+                </span>
               </div>
-              <div className="flex items-center space-x-2 text-gray-600">
-                <User className="h-5 w-5" />
-                <span>Artist: {artist}</span>
+              
+              <div className="flex items-center text-gray-600">
+                <User className="h-5 w-5 mr-2" />
+                <span className="text-sm">
+                  <strong>Artist:</strong> {artist}
+                </span>
               </div>
+
               {year && (
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <Calendar className="h-5 w-5" />
-                  <span>Year: {year}</span>
+                <div className="flex items-center text-gray-600">
+                  <Calendar className="h-5 w-5 mr-2" />
+                  <span className="text-sm">
+                    <strong>Year:</strong> {year}
+                  </span>
                 </div>
               )}
-              <div className="flex items-center space-x-2 text-gray-600">
-                <BookOpen className="h-5 w-5" />
-                <span>Chapters: {chapters.length}</span>
+
+              <div className="flex items-center text-gray-600">
+                <BookOpen className="h-5 w-5 mr-2" />
+                <span className="text-sm">
+                  <strong>Chapters:</strong> {chapters.length}
+                </span>
               </div>
             </div>
-            
+
             <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Description</h3>
-              <p className="text-gray-700 leading-relaxed">{description}</p>
+              <h2 className="text-xl font-semibold text-gray-900 mb-3">Description</h2>
+              <p className="text-gray-700 leading-relaxed">
+                {description}
+              </p>
             </div>
-            
-            {tags.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-2">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {tags.slice(0, 10).map((tag) => (
-                    <span
-                      key={tag.id}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                    >
-                      {tag.attributes.name.en}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            <div className="flex flex-col sm:flex-row gap-4">
+
+            <div className="flex flex-wrap gap-2 mb-6">
+              {manga.attributes?.tags?.slice(0, 10).map((tag) => (
+                <span
+                  key={tag.id}
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                >
+                  {tag.attributes?.name?.en || 'Unknown Tag'}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex gap-4">
               {chapters.length > 0 && (
                 <Link
                   to={`/read/${manga.id}/${chapters[0].id}`}
-                  className="flex items-center space-x-2 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
+                  className="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
                 >
-                  <Play className="h-5 w-5" />
-                  <span>Start Reading</span>
+                  <Play className="h-5 w-5 mr-2" />
+                  Start Reading
                 </Link>
               )}
-              <button className="flex items-center space-x-2 border border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary hover:text-white transition-colors">
-                <Star className="h-5 w-5" />
-                <span>Add to Favorites</span>
+              
+              <button className="flex items-center px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
+                <Star className="h-5 w-5 mr-2" />
+                Add to Favorites
               </button>
-            </div>
-            
-            {/* Note about chapter availability */}
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-start space-x-2">
-                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="text-sm font-medium text-yellow-800">Chapter Availability Notice</h4>
-                  <p className="text-sm text-yellow-700 mt-1">
-                    Some chapters may not be available due to licensing restrictions, regional blocks, or upload issues. 
-                    If you encounter reading errors, try different chapters or check back later.
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -204,52 +219,36 @@ const MangaDetail = () => {
 
       {/* Chapters List */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-4">Chapters</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Chapters</h2>
         
         {chapters.length === 0 ? (
-          <p className="text-gray-600">No chapters available</p>
+          <div className="text-center py-8">
+            <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600">No chapters available</p>
+          </div>
         ) : (
-          <>
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-700">
-                💡 <strong>Tip:</strong> If a chapter fails to load, try another chapter or refresh the page. 
-                Chapter availability depends on MangaDx servers and regional restrictions.
-              </p>
-            </div>
-            
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {chapters.map((chapter, index) => (
-                <Link
-                  key={chapter.id}
-                  to={`/read/${manga.id}/${chapter.id}`}
-                  className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
-                >
-                  <div>
-                    <h4 className="font-medium group-hover:text-primary transition-colors">
-                      Chapter {chapter.attributes.chapter}
-                      {chapter.attributes.title && `: ${chapter.attributes.title}`}
-                    </h4>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>{chapter.attributes.pages} pages</span>
-                      {chapter.attributes.translatedLanguage && (
-                        <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                          {chapter.attributes.translatedLanguage.toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm text-gray-500">
-                      {new Date(chapter.attributes.publishAt).toLocaleDateString()}
-                    </div>
-                    {index === 0 && (
-                      <span className="text-xs text-green-600 font-medium">Latest</span>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </>
+          <div className="space-y-2">
+            {chapters.map((chapter) => (
+              <Link
+                key={chapter.id}
+                to={`/read/${manga.id}/${chapter.id}`}
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div>
+                  <h3 className="font-medium text-gray-900">
+                    Chapter {chapter.attributes?.chapter || 'Unknown'}
+                    {chapter.attributes?.title && `: ${chapter.attributes.title}`}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {chapter.attributes?.pages} pages
+                  </p>
+                </div>
+                <div className="text-sm text-gray-500">
+                  {new Date(chapter.attributes?.publishAt).toLocaleDateString()}
+                </div>
+              </Link>
+            ))}
+          </div>
         )}
       </div>
     </div>
