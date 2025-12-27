@@ -18,7 +18,7 @@ const MangaCard = ({ manga }) => {
   const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
   let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
   
-  // Debug logging to see what's happening
+  // Debug logging to see what's happening (will remove after fix confirmed)
   console.log('Manga title:', title);
   console.log('Manga ID:', manga.id);
   console.log('All relationships:', manga.relationships?.map(r => ({ type: r.type, hasAttributes: !!r.attributes })));
