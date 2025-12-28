@@ -290,8 +290,8 @@ class Manhwa18Api {
         
         let pageUrl;
         if (isProduction) {
-          // In production, use images.weserv.nl proxy (same as regular manga reader)
-          pageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=1200&h=1800&fit=inside&output=webp`;
+          // In production, use corsproxy.io which works better with MangaDex
+          pageUrl = `https://corsproxy.io/?${encodeURIComponent(directUrl)}`;
         } else {
           // In development, use direct URL
           pageUrl = directUrl;

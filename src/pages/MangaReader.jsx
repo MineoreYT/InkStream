@@ -50,8 +50,8 @@ const MangaReader = () => {
             const directUrl = `${baseUrl}/data/${chapterHash}/${filename}`;
             
             if (isProduction) {
-              // In production, use image proxy to avoid anti-hotlinking
-              return `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=1200&h=1800&fit=inside&output=webp`;
+              // In production, use corsproxy.io which works better with MangaDex
+              return `https://corsproxy.io/?${encodeURIComponent(directUrl)}`;
             } else {
               // In development, use direct URL
               return directUrl;
@@ -304,17 +304,17 @@ const MangaReader = () => {
               const currentSrc = img.src;
               
               // Try different proxy services if the current one fails
-              if (currentSrc.includes('weserv.nl')) {
-                // Try wsrv.nl proxy
-                const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
-                img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside`;
-              } else if (currentSrc.includes('wsrv.nl')) {
+              if (currentSrc.includes('corsproxy.io')) {
+                // Try images.weserv.nl as fallback
+                const originalUrl = decodeURIComponent(currentSrc.replace('https://corsproxy.io/?', ''));
+                img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&output=webp`;
+              } else if (currentSrc.includes('weserv.nl')) {
                 // Try direct URL as last resort
                 const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
                 img.src = originalUrl;
               } else {
                 // Final fallback to placeholder
-                img.src = 'https://via.placeholder.com/800x1200/374151/9ca3af?text=Failed+to+Load+Page';
+                img.src = 'https://via.placeholder.com/800x1200/374151/9ca3af?text=Page+Unavailable';
               }
             }}
           />
