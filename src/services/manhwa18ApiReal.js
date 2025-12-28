@@ -290,8 +290,9 @@ class Manhwa18Api {
         
         let pageUrl;
         if (isProduction) {
-          // In production, use our custom chapter proxy to avoid anti-hotlinking
-          pageUrl = `/api/chapter-proxy?url=${encodeURIComponent(directUrl)}`;
+          // In production, use wsrv.nl proxy (more reliable for MangaDex images)
+          // wsrv.nl doesn't have the same restrictions as weserv.nl
+          pageUrl = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&n=-1`;
         } else {
           // In development, use direct URL
           pageUrl = directUrl;

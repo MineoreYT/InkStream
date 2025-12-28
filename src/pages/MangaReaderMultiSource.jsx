@@ -80,8 +80,8 @@ const MangaReaderMultiSource = () => {
               const directUrl = `${baseUrl}/data/${chapterHash}/${filename}`;
               
               if (isProduction) {
-                // In production, use our custom chapter proxy to avoid anti-hotlinking
-                return `/api/chapter-proxy?url=${encodeURIComponent(directUrl)}`;
+                // In production, use wsrv.nl proxy (more reliable for MangaDex images)
+                return `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&n=-1`;
               } else {
                 // In development, use direct URL
                 return directUrl;
@@ -357,21 +357,17 @@ const MangaReaderMultiSource = () => {
                 const currentSrc = img.src;
                 
                 // Try different fallback strategies
-                if (currentSrc.includes('/api/chapter-proxy')) {
-                  // If our proxy failed, try external proxy
-                  const originalUrl = decodeURIComponent(currentSrc.split('url=')[1]);
-                  img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside&output=webp`;
-                } else if (currentSrc.includes('weserv.nl')) {
-                  // Try wsrv.nl proxy
+                if (currentSrc.includes('wsrv.nl')) {
+                  // If wsrv.nl failed, try weserv.nl
                   const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
-                  img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&fit=inside`;
-                } else if (currentSrc.includes('wsrv.nl')) {
-                  // Try direct URL as last resort
+                  img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&output=webp`;
+                } else if (currentSrc.includes('weserv.nl')) {
+                  // If weserv.nl also failed, try direct URL
                   const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
                   img.src = originalUrl;
                 } else {
                   // Final fallback to placeholder
-                  img.src = 'https://via.placeholder.com/800x1200/374151/9ca3af?text=Failed+to+Load+Page';
+                  img.src = 'https://via.placeholder.com/800x1200/374151/9ca3af?text=Page+Unavailable';
                 }
               }}
             />
@@ -402,21 +398,17 @@ const MangaReaderMultiSource = () => {
                   const currentSrc = img.src;
                   
                   // Try different fallback strategies
-                  if (currentSrc.includes('/api/chapter-proxy')) {
-                    // If our proxy failed, try external proxy
-                    const originalUrl = decodeURIComponent(currentSrc.split('url=')[1]);
-                    img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside&output=webp`;
-                  } else if (currentSrc.includes('weserv.nl')) {
-                    // Try wsrv.nl proxy
+                  if (currentSrc.includes('wsrv.nl')) {
+                    // If wsrv.nl failed, try weserv.nl
                     const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
-                    img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&fit=inside`;
-                  } else if (currentSrc.includes('wsrv.nl')) {
-                    // Try direct URL as last resort
+                    img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&output=webp`;
+                  } else if (currentSrc.includes('weserv.nl')) {
+                    // If weserv.nl also failed, try direct URL
                     const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
                     img.src = originalUrl;
                   } else {
                     // Final fallback to placeholder
-                    img.src = 'https://via.placeholder.com/800x1200/374151/9ca3af?text=Failed+to+Load+Page';
+                    img.src = 'https://via.placeholder.com/800x1200/374151/9ca3af?text=Page+Unavailable';
                   }
                 }}
               />

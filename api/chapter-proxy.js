@@ -27,9 +27,21 @@ export default async function handler(req, res) {
     // Decode the URL
     const imageUrl = decodeURIComponent(url);
     
-    // Validate that it's a MangaDx chapter image URL
-    if (!imageUrl.includes('mangadx.org') && !imageUrl.includes('.mangadx.network')) {
-      res.status(400).json({ error: 'Invalid image URL - must be from MangaDx' });
+    // Validate that it's a MangaDex chapter image URL (various CDN domains)
+    const allowedDomains = [
+      'mangadex.org',
+      'uploads.mangadex.org',
+      'cmdxd97gh0x3e.cloudfront.net',
+      'na.mangadex.network',
+      'eu.mangadex.network',
+      'ap.mangadex.network'
+    ];
+    
+    const isValidUrl = allowedDomains.some(domain => imageUrl.includes(domain));
+    
+    if (!isValidUrl) {
+      console.log('Invalid URL rejected:', imageUrl);
+      res.status(400).json({ error: 'Invalid image URL - must be from MangaDex', receivedUrl: imageUrl });
       return;
     }
 
@@ -38,12 +50,14 @@ export default async function handler(req, res) {
     // Fetch the image with proper headers to avoid anti-hotlinking
     const imageResponse = await fetch(imageUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Referer': 'https://mangadx.org/',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://mangadex.org/',
+        'Origin': 'https://mangadex.org',
         'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
+        'Sec-Fetch-Dest': 'image',
+        'Sec-Fetch-Mode': 'no-cors',
+        'Sec-Fetch-Site': 'cross-site'
       },
     });
 
@@ -66,7 +80,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Chapter proxy error:', error);
     
-    // Return a placeholder image on error
+    // Return error info
     res.status(500).json({ 
       error: 'Failed to fetch chapter image',
       message: error.message,

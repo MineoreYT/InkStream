@@ -1,9 +1,7 @@
 // InkStream Service Worker
-const CACHE_NAME = 'inkstream-v1';
+const CACHE_NAME = 'inkstream-v2';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
   '/manifest.json'
 ];
 
@@ -15,18 +13,60 @@ self.addEventListener('install', (event) => {
         console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
+      .catch((error) => {
+        console.log('Cache addAll failed:', error);
+      })
   );
+  // Skip waiting to activate immediately
+  self.skipWaiting();
 });
 
-// Fetch event
+// Fetch event - only cache same-origin non-API requests
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // Skip caching for:
+  // 1. API calls (both local and external)
+  // 2. External domains (MangaDex, image proxies, etc.)
+  // 3. Non-GET requests
+  const shouldSkip = 
+    event.request.method !== 'GET' ||
+    url.pathname.startsWith('/api/') ||
+    url.hostname !== self.location.hostname ||
+    url.hostname.includes('mangadex') ||
+    url.hostname.includes('weserv') ||
+    url.hostname.includes('wsrv') ||
+    url.hostname.includes('cloudfront');
+  
+  if (shouldSkip) {
+    // Don't intercept - let the browser handle it normally
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
         // Return cached version or fetch from network
-        return response || fetch(event.request);
-      }
-    )
+        if (response) {
+          return response;
+        }
+        return fetch(event.request).then((fetchResponse) => {
+          // Don't cache if not a valid response
+          if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+            return fetchResponse;
+          }
+          // Clone and cache the response
+          const responseToCache = fetchResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+          return fetchResponse;
+        });
+      })
+      .catch(() => {
+        // Return offline fallback if available
+        return caches.match('/');
+      })
   );
 });
 
@@ -44,4 +84,6 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  // Take control of all pages immediately
+  self.clients.claim();
 });
