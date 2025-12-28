@@ -1,163 +1,176 @@
-# InkStream - Manga Reading App
+# 📚 InkStream - Manga & Manhwa Reading App
 
-A modern manga reading application built with React, Vite, and Tailwind CSS, powered by the MangaDex API.
+A modern manga and adult Korean manhwa reading application built with React, Vite, and Tailwind CSS. Powered by the MangaDex API with full PWA support and native Android app.
 
-## Features
+![InkStream](public/InkStream.webp)
 
-- 📚 Browse popular and latest manga
-- 🔍 Search functionality with real-time suggestions
+## ✨ Features
+
+### 📖 Reading Experience
+- 📚 Browse popular manga and manhwa
+- 🔍 Real-time search with suggestions
 - 📂 Category-based browsing
-- 📖 Full-screen manga reader with keyboard navigation
-- 🔞 NSFW content toggle with age verification
-- 📱 Responsive design for all devices
+- 📖 Full-screen reader with keyboard navigation
+- 🔄 Auto-scroll to top when changing pages/chapters
+- 🔞 Adult Korean manhwa section (18+)
+
+### 📱 Multi-Platform Support
+- 🌐 **Web App** - Works in any modern browser
+- 📲 **PWA** - Install as app on mobile/desktop
+- 🤖 **Android APK** - Native Android app via Capacitor
+- 📱 Responsive design for all screen sizes
+
+### 🎨 User Experience
 - 🎨 Modern UI with Tailwind CSS
 - ⚡ Fast performance with Vite
-- 🔔 Toast notifications for user feedback
-- 💾 Local storage for user preferences
+- 🔔 Toast notifications
+- 💾 Local storage for preferences
+- 🌙 Clean, intuitive interface
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend**: React 18
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Styling**: Tailwind CSS v3.4
-- **Routing**: React Router DOM
-- **HTTP Client**: Axios
-- **Icons**: Lucide React
-- **API**: MangaDex API
+| Category | Technology |
+|----------|------------|
+| Frontend | React 19 |
+| Build Tool | Vite 7 |
+| Styling | Tailwind CSS v3.4 |
+| Routing | React Router DOM v7 |
+| HTTP Client | Axios |
+| Icons | Lucide React |
+| Mobile | Capacitor (Android) |
+| API | MangaDex API |
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-
-- Node.js (v16 or higher)
+- Node.js v18 or higher
 - npm or yarn
 
 ### Installation
 
-1. Clone the repository:
 ```bash
-git clone <repository-url>
+# Clone the repository
+git clone https://github.com/MineoreYT/InkStream.git
 cd manga-app
-```
 
-2. Install dependencies:
-```bash
+# Install dependencies
 npm install
-```
 
-3. Start the development server:
-```bash
+# Start development server
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+Open `http://localhost:5173` in your browser.
 
-## NSFW Content
+### Build for Production
 
-InkStream includes mature content features with proper safeguards:
+```bash
+npm run build
+npm run preview
+```
+
+## 📱 Mobile App
+
+### PWA Installation
+1. Visit the deployed site on your mobile browser
+2. Click "Add to Home Screen" or use the install prompt
+3. The app will be installed like a native app
+
+### Android APK
+The Android APK is automatically built via GitHub Actions when code is pushed to main.
+
+1. Go to the [Actions tab](../../actions) on GitHub
+2. Find the latest successful build
+3. Download the `InkStream.apk` artifact
+4. Install on your Android device
+
+## 🔞 Adult Content (Manhwa 18+)
+
+InkStream includes a dedicated section for adult Korean manhwa with proper safeguards:
 
 ### Features
-- **Age Verification**: Users must confirm they are 18+ to access NSFW content
-- **Content Toggle**: NSFW content can be enabled/disabled in the sidebar
-- **Content Ratings**: Visual badges indicate content ratings (Safe, Suggestive, Erotica, Pornographic)
-- **Dedicated Section**: Separate NSFW page with additional warnings
-- **User Preferences**: Settings are saved locally for convenience
+- **Age Verification** - Users must confirm 18+ to access
+- **Content Warnings** - Clear warnings about mature content
+- **Language Notice** - Some chapters may not be in English
+- **Real MangaDex Data** - Fetches actual adult manhwa from MangaDex API
 
 ### Content Ratings
-- **Safe**: General audiences, no mature content
-- **Suggestive**: Mild suggestive themes, marked with "S" badge
-- **Erotica**: Adult content with nudity, marked with "18+" badge  
-- **Pornographic**: Explicit adult content, marked with "🔞" badge
+| Rating | Badge | Description |
+|--------|-------|-------------|
+| Safe | - | General audiences |
+| Suggestive | S | Mild suggestive themes |
+| Erotica | 18+ | Adult content with nudity |
+| Pornographic | 🔞 | Explicit adult content |
 
-### Privacy & Safety
-- Age verification is required before accessing any NSFW content
-- Content warnings are displayed when NSFW is enabled
-- All preferences are stored locally on your device
-- No personal data is sent to external servers
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-src/
-├── components/          # Reusable UI components
-│   ├── Header.jsx      # App header with search
-│   ├── Sidebar.jsx     # Navigation sidebar
-│   ├── MangaCard.jsx   # Manga display card
-│   └── LoadingSpinner.jsx
-├── pages/              # Page components
-│   ├── HomePage.jsx    # Main landing page
-│   ├── MangaDetail.jsx # Manga details page
-│   ├── MangaReader.jsx # Manga reading interface
-│   └── CategoryPage.jsx # Category browsing
-├── services/           # API services
-│   └── mangadexApi.js  # MangaDex API integration
-├── App.jsx            # Main app component
-├── main.jsx           # App entry point
-└── index.css          # Global styles
+manga-app/
+├── api/                    # Vercel serverless functions
+│   ├── manga.js           # MangaDex API proxy
+│   ├── chapter-proxy.js   # Chapter image proxy
+│   └── image-proxy.js     # Cover image proxy
+├── public/                 # Static assets
+│   ├── manifest.json      # PWA manifest
+│   └── sw.js              # Service worker
+├── src/
+│   ├── components/        # Reusable UI components
+│   ├── contexts/          # React contexts
+│   ├── pages/             # Page components
+│   └── services/          # API services
+├── android/               # Capacitor Android project
+└── .github/workflows/     # GitHub Actions (APK build)
 ```
 
-## API Credits
+## 🔧 Available Scripts
 
-This application uses the **MangaDex API** to fetch manga data.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
+| `npm run android:sync` | Sync Capacitor with Android |
+| `npm run android:build` | Build Android project |
 
-- **API Provider**: MangaDex
-- **Website**: https://mangadex.org
-- **API Documentation**: https://api.mangadx.org/docs/
+## 🌐 Deployment
 
-### MangaDex API Features Used:
-- Manga search and browsing
-- Chapter listings
-- Cover art retrieval
-- Category/tag filtering
-- Chapter page images
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Vercel will auto-detect Vite and deploy
+3. Serverless functions in `/api` folder work automatically
 
-## Available Scripts
+### Environment Variables
+No environment variables required - the app uses public APIs.
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+## 🙏 Credits
 
-## Features Overview
+### API
+- **MangaDex** - Manga/Manhwa data and images
+- **API Docs**: https://api.mangadex.org/docs/
 
-### Home Page
-- Popular manga carousel
-- Latest updates section
-- Quick navigation to categories
+### Image Proxies
+- **corsproxy.io** - CORS proxy for chapter pages
+- **images.weserv.nl** - Image proxy fallback
 
-### Manga Details
-- Comprehensive manga information
-- Chapter listings
-- Author and artist details
-- Tags and categories
-- Reading progress tracking
+### Technologies
+- React Team for the amazing framework
+- Tailwind CSS for utility-first styling
+- Vite for lightning-fast builds
+- Capacitor for native mobile support
 
-### Manga Reader
-- Full-screen reading experience
-- Keyboard navigation (arrow keys)
-- Page indicators
-- Chapter navigation
-
-### Sidebar Navigation
-- Category browsing
-- Quick access to favorites
-- API credits section
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## License
+## 📄 License
 
 This project is for educational purposes. Please respect MangaDex's terms of service and the rights of manga creators and publishers.
 
-## Acknowledgments
+## 🤝 Contributing
 
-- **MangaDex** for providing the comprehensive manga API
-- **React Team** for the amazing framework
-- **Tailwind CSS** for the utility-first CSS framework
-- **Vite** for the lightning-fast build tool
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+**Made with ❤️ by MineoreYT**
