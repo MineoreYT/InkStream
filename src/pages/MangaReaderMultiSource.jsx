@@ -81,8 +81,8 @@ const MangaReaderMultiSource = () => {
               const directUrl = `${baseUrl}/data/${chapterHash}/${filename}`;
               
               if (isProduction) {
-                // In production, use wsrv.nl proxy (more reliable for MangaDex images)
-                return `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&n=-1`;
+                // In production, use images.weserv.nl proxy (same as regular manga reader)
+                return `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=1200&h=1800&fit=inside&output=webp`;
               } else {
                 // In development, use direct URL
                 return directUrl;
@@ -357,13 +357,13 @@ const MangaReaderMultiSource = () => {
                 const img = e.target;
                 const currentSrc = img.src;
                 
-                // Try different fallback strategies
-                if (currentSrc.includes('wsrv.nl')) {
-                  // If wsrv.nl failed, try weserv.nl
+                // Try different proxy services if the current one fails (same as regular manga reader)
+                if (currentSrc.includes('weserv.nl')) {
+                  // Try wsrv.nl proxy
                   const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
-                  img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&output=webp`;
-                } else if (currentSrc.includes('weserv.nl')) {
-                  // If weserv.nl also failed, try direct URL
+                  img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside`;
+                } else if (currentSrc.includes('wsrv.nl')) {
+                  // Try direct URL as last resort
                   const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
                   img.src = originalUrl;
                 } else {
@@ -398,13 +398,13 @@ const MangaReaderMultiSource = () => {
                   const img = e.target;
                   const currentSrc = img.src;
                   
-                  // Try different fallback strategies
-                  if (currentSrc.includes('wsrv.nl')) {
-                    // If wsrv.nl failed, try weserv.nl
+                  // Try different proxy services if the current one fails (same as regular manga reader)
+                  if (currentSrc.includes('weserv.nl')) {
+                    // Try wsrv.nl proxy
                     const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
-                    img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&output=webp`;
-                  } else if (currentSrc.includes('weserv.nl')) {
-                    // If weserv.nl also failed, try direct URL
+                    img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside`;
+                  } else if (currentSrc.includes('wsrv.nl')) {
+                    // Try direct URL as last resort
                     const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
                     img.src = originalUrl;
                   } else {

@@ -290,9 +290,8 @@ class Manhwa18Api {
         
         let pageUrl;
         if (isProduction) {
-          // In production, use wsrv.nl proxy (more reliable for MangaDex images)
-          // wsrv.nl doesn't have the same restrictions as weserv.nl
-          pageUrl = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&n=-1`;
+          // In production, use images.weserv.nl proxy (same as regular manga reader)
+          pageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=1200&h=1800&fit=inside&output=webp`;
         } else {
           // In development, use direct URL
           pageUrl = directUrl;
