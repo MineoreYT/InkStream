@@ -1,0 +1,8 @@
+node_modules
+.git
+.env.local
+.env.*.local
+android
+.github
+*.md
+!README.md

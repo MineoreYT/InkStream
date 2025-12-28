@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview",
     "android:build": "npm run build && npx cap sync android",
     "android:open": "npx cap open android",
     "android:sync": "npx cap sync android",
-    "build:android": "node build-android.js"
+    "build:android": "node build-android.js",
+    "clean": "rm -rf dist node_modules/.vite",
+    "deploy": "npm run clean && npm run build"
   },
   "dependencies": {
     "@capacitor/android": "^6.1.2",
