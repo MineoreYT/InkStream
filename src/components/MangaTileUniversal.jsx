@@ -21,7 +21,7 @@ const MangaTileUniversal = ({ manga }) => {
   const contentRating = manga.rating || manga.attributes?.contentRating || 'safe';
   
   // Handle cover art with multiple fallback strategies
-  let coverUrl = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+  let coverUrl = 'https://placehold.co/300x400/1f2937/9ca3af?text=No+Cover';
   
   // Check if it's simple format (manhwa) with direct coverArt URL
   if (manga.coverArt && typeof manga.coverArt === 'string') {
@@ -39,15 +39,8 @@ const MangaTileUniversal = ({ manga }) => {
         (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
       
       if (isProduction) {
-        // Try multiple public image proxy services
-        const proxyServices = [
-          `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`,
-          `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`,
-          `https://imageproxy.pimg.tw/resize?url=${encodeURIComponent(directUrl)}&width=400`,
-          directUrl // Fallback to direct URL
-        ];
-        
-        coverUrl = proxyServices[0]; // Start with weserv.nl
+        // Use corsproxy.io first (same as chapter pages that work)
+        coverUrl = `https://corsproxy.io/?${encodeURIComponent(directUrl)}`;
       } else {
         // In development, use direct URL
         coverUrl = directUrl;
@@ -81,31 +74,48 @@ const MangaTileUniversal = ({ manga }) => {
     const img = e.target;
     const currentSrc = img.src;
     
-    // For simple format (manhwa), just use placeholder
+    // For simple format (manhwa) with coverArt URL
     if (manga.coverArt && typeof manga.coverArt === 'string') {
-      img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+      // Try different proxy strategies for manhwa covers
+      if (currentSrc.includes('corsproxy.io')) {
+        // Try weserv.nl as fallback
+        const originalUrl = decodeURIComponent(currentSrc.replace('https://corsproxy.io/?', ''));
+        img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=400&h=600&fit=cover`;
+      } else if (currentSrc.includes('weserv.nl')) {
+        // Try wsrv.nl as fallback
+        const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
+        img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=400&h=600&fit=cover`;
+      } else if (currentSrc.includes('wsrv.nl')) {
+        // Final fallback to placeholder
+        img.src = 'https://placehold.co/300x400/1f2937/9ca3af?text=No+Cover';
+      } else if (!currentSrc.includes('placehold')) {
+        // Try corsproxy.io first if it's a direct URL
+        img.src = `https://corsproxy.io/?${encodeURIComponent(currentSrc)}`;
+      } else {
+        img.src = 'https://placehold.co/300x400/1f2937/9ca3af?text=No+Cover';
+      }
       return;
     }
     
     // For MangaDx format, try different proxies
     const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
-    if (coverArt?.attributes?.fileName && !currentSrc.includes('placeholder')) {
+    if (coverArt?.attributes?.fileName && !currentSrc.includes('placehold')) {
       const fileName = coverArt.attributes.fileName;
       const directUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
       
       // Try different proxy services in order
-      if (currentSrc.includes('weserv.nl')) {
+      if (currentSrc.includes('corsproxy.io')) {
+        img.src = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
+      } else if (currentSrc.includes('weserv.nl')) {
         img.src = `https://wsrv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
       } else if (currentSrc.includes('wsrv.nl')) {
-        img.src = `https://imageproxy.pimg.tw/resize?url=${encodeURIComponent(directUrl)}&width=400`;
-      } else if (currentSrc.includes('pimg.tw')) {
         img.src = directUrl; // Try direct URL
       } else {
         // Final fallback to placeholder
-        img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+        img.src = 'https://placehold.co/300x400/1f2937/9ca3af?text=No+Cover';
       }
     } else {
-      img.src = 'https://via.placeholder.com/300x400/e5e7eb/9ca3af?text=No+Cover';
+      img.src = 'https://placehold.co/300x400/1f2937/9ca3af?text=No+Cover';
     }
   };
 
