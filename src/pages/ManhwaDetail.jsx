@@ -2,27 +2,16 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, Tag, Shield, Play, Clock } from 'lucide-react';
 import LoadingSpinner from '../components/LoadingSpinner';
-import apiManager, { API_SOURCES } from '../services/apiManager';
+import { API_SOURCES } from '../services/apiManager';
+import manhwa18Api from '../services/manhwa18ApiReal';
 
 const ManhwaDetail = () => {
   const { source, id } = useParams();
   const [manhwa, setManhwa] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showAgeVerification, setShowAgeVerification] = useState(false);
 
   useEffect(() => {
-    // Check if this is a manhwa18 source and age verification
-    if (source === API_SOURCES.MANHWA18) {
-      const isVerified = apiManager.isAgeVerifiedForSource(API_SOURCES.MANHWA18);
-      if (!isVerified) {
-        setShowAgeVerification(true);
-        setLoading(false);
-        return;
-      }
-      setAgeVerified(true);
-    }
-
     fetchManhwaDetails();
   }, [source, id]);
 
@@ -31,7 +20,8 @@ const ManhwaDetail = () => {
       setLoading(true);
       setError(null);
       
-      const data = await apiManager.getMangaDetails(source || API_SOURCES.MANHWA18, id);
+      // Directly use manhwa18Api to bypass age verification
+      const data = await manhwa18Api.getManhwaDetails(id);
       setManhwa(data);
     } catch (err) {
       setError(err.message || 'Failed to load manhwa details');
@@ -40,54 +30,6 @@ const ManhwaDetail = () => {
       setLoading(false);
     }
   };
-
-  const handleAgeVerification = (verified) => {
-    if (verified) {
-      apiManager.setAgeVerificationForSource(API_SOURCES.MANHWA18, true);
-      setShowAgeVerification(false);
-      fetchManhwaDetails();
-    } else {
-      setShowAgeVerification(false);
-      setError('Age verification required to access adult content');
-    }
-  };
-
-  if (showAgeVerification) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg p-8 max-w-md w-full shadow-lg">
-          <div className="text-center">
-            <Shield size={64} className="mx-auto text-red-500 mb-6" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              Adult Content Warning
-            </h1>
-            <p className="text-gray-600 mb-6">
-              This manhwa contains adult content (18+). You must be 18 years or older to access this content.
-            </p>
-            
-            <div className="space-y-4">
-              <button
-                onClick={() => handleAgeVerification(true)}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
-              >
-                I am 18 or older - Continue
-              </button>
-              <Link
-                to="/manhwa"
-                className="block w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors text-center"
-              >
-                Go back to Manhwa List
-              </Link>
-            </div>
-            
-            <p className="text-xs text-gray-500 mt-6">
-              By clicking "I am 18 or older", you confirm that you are of legal age to view adult content.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import apiManager, { API_SOURCES } from '../services/apiManager';
+import manhwa18Api from '../services/manhwa18ApiReal';
 import { Loader2, AlertCircle, ChevronLeft, ChevronRight, ArrowLeft, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 
 const MangaReaderMultiSource = () => {
@@ -31,10 +32,10 @@ const MangaReaderMultiSource = () => {
         setCurrentPage(0); // Reset to first page when chapter changes
         
         if (actualSource === API_SOURCES.MANHWA18) {
-          // Handle manhwa18 source
+          // Handle manhwa18 source - directly use manhwa18Api to bypass age verification
           const [manhwaDetails, pagesData] = await Promise.all([
-            apiManager.getMangaDetails(actualSource, actualMangaId),
-            apiManager.getChapterPages(actualSource, actualMangaId, actualChapterId)
+            manhwa18Api.getManhwaDetails(actualMangaId),
+            manhwa18Api.getChapterPages(actualMangaId, actualChapterId)
           ]);
           
           // Set chapters from manhwa details
