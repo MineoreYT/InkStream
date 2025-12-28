@@ -12,7 +12,7 @@ A modern manga and adult Korean manhwa reading application built with React, Vit
 - 📂 Category-based browsing
 - 📖 Full-screen reader with keyboard navigation
 - 🔄 Auto-scroll to top when changing pages/chapters
-- 🔞 Adult Korean manhwa section (18+)
+
 
 ### 📱 Multi-Platform Support
 - 🌐 **Web App** - Works in any modern browser
@@ -84,23 +84,7 @@ The Android APK is automatically built via GitHub Actions when code is pushed to
 3. Download the `InkStream.apk` artifact
 4. Install on your Android device
 
-## 🔞 Adult Content (Manhwa 18+)
 
-InkStream includes a dedicated section for adult Korean manhwa with proper safeguards:
-
-### Features
-- **Age Verification** - Users must confirm 18+ to access
-- **Content Warnings** - Clear warnings about mature content
-- **Language Notice** - Some chapters may not be in English
-- **Real MangaDex Data** - Fetches actual adult manhwa from MangaDex API
-
-### Content Ratings
-| Rating | Badge | Description |
-|--------|-------|-------------|
-| Safe | - | General audiences |
-| Suggestive | S | Mild suggestive themes |
-| Erotica | 18+ | Adult content with nudity |
-| Pornographic | 🔞 | Explicit adult content |
 
 ## 📁 Project Structure
 
