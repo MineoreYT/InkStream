@@ -317,10 +317,10 @@ class Manhwa18Api {
     }
   }
 
-  // Helper function to get REAL cover URL from MangaDx
+  // Helper function to get REAL cover URL from MangaDex
   getCoverUrl(manga) {
     const coverArt = manga.relationships?.find(rel => rel.type === 'cover_art');
-    let coverUrl = 'https://dummyimage.com/400x600/e5e7eb/9ca3af&text=No+Cover';
+    let coverUrl = 'https://placehold.co/400x600/1f2937/9ca3af?text=No+Cover';
     
     if (coverArt?.attributes?.fileName) {
       const fileName = coverArt.attributes.fileName;
@@ -331,7 +331,8 @@ class Manhwa18Api {
         (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
       
       if (isProduction) {
-        coverUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=400&h=600&fit=cover`;
+        // Use corsproxy.io for cover images (same as chapter pages)
+        coverUrl = `https://corsproxy.io/?${encodeURIComponent(directUrl)}`;
       } else {
         coverUrl = directUrl;
       }
