@@ -8,6 +8,7 @@ import InstallPrompt from './components/InstallPrompt';
 import HomePage from './pages/HomePage';
 import MangaDetail from './pages/MangaDetail';
 import MangaReader from './pages/MangaReader';
+import MangaReaderMultiSource from './pages/MangaReaderMultiSource';
 import CategoryPage from './pages/CategoryPage';
 import SearchResults from './pages/SearchResults';
 import PopularPage from './pages/PopularPage';
@@ -15,8 +16,9 @@ import LatestPage from './pages/LatestPage';
 import NSFWPage from './pages/NSFWPage';
 import FavoritesPage from './pages/FavoritesPage';
 import ReadingListPage from './pages/ReadingListPage';
+import ManhwaDetail from './pages/ManhwaDetail';
+import ManhwaPage from './pages/ManhwaPage';
 import NotFound from './pages/NotFound';
-import './App.css';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false); // Default closed on mobile
@@ -31,7 +33,8 @@ function App() {
       <NotificationProvider>
         <Router>
           <Routes>
-            {/* Full-screen manga reader route */}
+            {/* Full-screen manga reader routes */}
+            <Route path="/read/:source/:mangaId/:chapterId" element={<MangaReaderMultiSource />} />
             <Route path="/read/:mangaId/:chapterId" element={<MangaReader />} />
             
             {/* Regular app layout routes */}
@@ -52,11 +55,14 @@ function App() {
                   <div className="p-4 sm:p-6">
                     <Routes>
                       <Route path="/" element={<HomePage />} />
+                      <Route path="/manga/manhwa18/:id" element={<ManhwaDetail />} />
+                      <Route path="/manga/:source/:id" element={<MangaDetail />} />
                       <Route path="/manga/:id" element={<MangaDetail />} />
                       <Route path="/category/:tag" element={<CategoryPage />} />
                       <Route path="/search" element={<SearchResults />} />
                       <Route path="/popular" element={<PopularPage />} />
                       <Route path="/latest" element={<LatestPage />} />
+                      <Route path="/manhwa" element={<ManhwaPage />} />
                       <Route path="/nsfw" element={<NSFWPage />} />
                       <Route path="/favorites" element={<FavoritesPage />} />
                       <Route path="/reading-list" element={<ReadingListPage />} />

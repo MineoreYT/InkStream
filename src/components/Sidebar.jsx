@@ -26,6 +26,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
     { name: 'Search', path: '/search', icon: Search },
     { name: 'Popular', path: '/popular', icon: TrendingUp },
     { name: 'Latest', path: '/latest', icon: Clock },
+    { name: 'Manhwa 18+', path: '/manhwa', icon: Shield, isAdult: true },
     { name: 'NSFW', path: '/nsfw', icon: Shield, isNSFW: true },
     { name: 'Favorites', path: '/favorites', icon: Heart },
     { name: 'Reading List', path: '/reading-list', icon: BookOpen },
@@ -40,7 +41,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
             
-            // Hide NSFW link if NSFW is disabled
+            // Hide NSFW link if NSFW is disabled, but always show Manhwa 18+
             if (item.isNSFW && !includeNSFW) {
               return null;
             }
@@ -60,12 +61,15 @@ const Sidebar = ({ isOpen, onToggle }) => {
                     ? 'bg-primary text-white'
                     : item.isNSFW 
                       ? 'text-red-600 hover:bg-red-50'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      : item.isAdult
+                        ? 'text-pink-600 hover:bg-pink-50'
+                        : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 <Icon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                 <span className="font-medium">{item.name}</span>
                 {item.isNSFW && <span className="text-xs">🔞</span>}
+                {item.isAdult && <span className="text-xs">🔞</span>}
               </Link>
             );
           })}
@@ -135,15 +139,15 @@ const Sidebar = ({ isOpen, onToggle }) => {
         {showCredits && (
           <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gray-50 rounded-lg">
             <p className="text-xs text-gray-600 mb-1 sm:mb-2">
-              Powered by MangaDex API
+              Powered by MangaDx API
             </p>
             <a
-              href="https://mangadex.org"
+              href="https://mangadx.org"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-primary hover:underline"
             >
-              Visit MangaDex.org
+              Visit MangaDx.org
             </a>
             <p className="text-xs text-gray-500 mt-1">
               © 2024 MangaDex. All rights reserved.
