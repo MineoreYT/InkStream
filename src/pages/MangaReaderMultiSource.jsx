@@ -80,8 +80,8 @@ const MangaReaderMultiSource = () => {
               const directUrl = `${baseUrl}/data/${chapterHash}/${filename}`;
               
               if (isProduction) {
-                // In production, use image proxy to avoid anti-hotlinking
-                return `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=1200&h=1800&fit=inside&output=webp`;
+                // In production, use our custom chapter proxy to avoid anti-hotlinking
+                return `/api/chapter-proxy?url=${encodeURIComponent(directUrl)}`;
               } else {
                 // In development, use direct URL
                 return directUrl;
@@ -356,8 +356,12 @@ const MangaReaderMultiSource = () => {
                 const img = e.target;
                 const currentSrc = img.src;
                 
-                // Try different proxy services if the current one fails
-                if (currentSrc.includes('weserv.nl')) {
+                // Try different fallback strategies
+                if (currentSrc.includes('/api/chapter-proxy')) {
+                  // If our proxy failed, try external proxy
+                  const originalUrl = decodeURIComponent(currentSrc.split('url=')[1]);
+                  img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside&output=webp`;
+                } else if (currentSrc.includes('weserv.nl')) {
                   // Try wsrv.nl proxy
                   const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
                   img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&fit=inside`;
@@ -397,11 +401,15 @@ const MangaReaderMultiSource = () => {
                   const img = e.target;
                   const currentSrc = img.src;
                   
-                  // Try different proxy services if the current one fails
-                  if (currentSrc.includes('weserv.nl')) {
+                  // Try different fallback strategies
+                  if (currentSrc.includes('/api/chapter-proxy')) {
+                    // If our proxy failed, try external proxy
+                    const originalUrl = decodeURIComponent(currentSrc.split('url=')[1]);
+                    img.src = `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside&output=webp`;
+                  } else if (currentSrc.includes('weserv.nl')) {
                     // Try wsrv.nl proxy
                     const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);
-                    img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&h=1800&fit=inside`;
+                    img.src = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=1200&fit=inside`;
                   } else if (currentSrc.includes('wsrv.nl')) {
                     // Try direct URL as last resort
                     const originalUrl = decodeURIComponent(currentSrc.split('url=')[1].split('&')[0]);

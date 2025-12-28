@@ -290,8 +290,8 @@ class Manhwa18Api {
         
         let pageUrl;
         if (isProduction) {
-          // In production, use image proxy to avoid anti-hotlinking
-          pageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(directUrl)}&w=1200&h=1800&fit=inside&output=webp`;
+          // In production, use our custom chapter proxy to avoid anti-hotlinking
+          pageUrl = `/api/chapter-proxy?url=${encodeURIComponent(directUrl)}`;
         } else {
           // In development, use direct URL
           pageUrl = directUrl;

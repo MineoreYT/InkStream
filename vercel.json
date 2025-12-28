@@ -8,6 +8,9 @@
     },
     "api/image-proxy.js": {
       "maxDuration": 30
+    },
+    "api/chapter-proxy.js": {
+      "maxDuration": 30
     }
   },
   "headers": [
