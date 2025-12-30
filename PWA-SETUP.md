@@ -7,7 +7,7 @@ A Progressive Web App (PWA) allows users to install your web app on their mobile
 - Get app-like experience (fullscreen, splash screen)
 - Receive push notifications (future feature)
 
-## Current Setup ✅
+## Current Setup 
 
 ### 1. Manifest File (`public/manifest.json`)
 - App name, description, icons
@@ -30,7 +30,7 @@ A Progressive Web App (PWA) allows users to install your web app on their mobile
 - Handles install process
 - Remembers user preferences
 
-## How Users Install 📱
+## How Users Install 
 
 ### Android (Chrome/Edge):
 1. Visit your app in browser
@@ -48,7 +48,7 @@ A Progressive Web App (PWA) allows users to install your web app on their mobile
 2. Address bar → Install icon
 3. Or Chrome menu → "Install InkStream"
 
-## Next Steps 🚀
+## Next Steps 
 
 ### 1. Create Real Icons
 Replace placeholder icons in `public/icons/` with actual PNG files:
@@ -90,10 +90,10 @@ npx cap open android  # Opens Android Studio
 This creates actual native apps that can be published to app stores.
 
 ## Current Status
-✅ PWA setup complete
-✅ Install prompt added
-⏳ Need real icons (currently using placeholders)
-⏳ Need screenshots for app stores
-⏳ Test on various devices
+ PWA setup complete
+ Install prompt added
+ Need real icons (currently using placeholders)
+ Need screenshots for app stores
+ Test on various devices
 
-Your InkStream app is now installable as a PWA! 🎉
+Your InkStream app is now installable as a PWA! 

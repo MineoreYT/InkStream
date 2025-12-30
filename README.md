@@ -1,4 +1,4 @@
-# 📚 InkStream - Manga & Manhwa Reading App
+#  InkStream - Manga & Manhwa Reading App
 
 A modern manga and adult Korean manhwa reading application built with React, Vite, and Tailwind CSS. Powered by the MangaDex API with full PWA support and native Android app.
 
@@ -6,26 +6,26 @@ A modern manga and adult Korean manhwa reading application built with React, Vit
 
 ## ✨ Features
 
-### 📖 Reading Experience
-- 📚 Browse popular manga and manhwa
-- 🔍 Real-time search with suggestions
-- 📂 Category-based browsing
-- 📖 Full-screen reader with keyboard navigation
-- 🔄 Auto-scroll to top when changing pages/chapters
+###  Reading Experience
+-  Browse popular manga and manhwa
+-  Real-time search with suggestions
+-  Category-based browsing
+-  Full-screen reader with keyboard navigation
+-  Auto-scroll to top when changing pages/chapters
 
 
-### 📱 Multi-Platform Support
-- 🌐 **Web App** - Works in any modern browser
-- 📲 **PWA** - Install as app on mobile/desktop
-- 🤖 **Android APK** - Native Android app via Capacitor
-- 📱 Responsive design for all screen sizes
+###  Multi-Platform Support
+-  **Web App** - Works in any modern browser
+-  **PWA** - Install as app on mobile/desktop
+-  **Android APK** - Native Android app via Capacitor
+-  Responsive design for all screen sizes
 
-### 🎨 User Experience
-- 🎨 Modern UI with Tailwind CSS
-- ⚡ Fast performance with Vite
-- 🔔 Toast notifications
-- 💾 Local storage for preferences
-- 🌙 Clean, intuitive interface
+###  User Experience
+-  Modern UI with Tailwind CSS
+-  Fast performance with Vite
+-  Toast notifications
+-  Local storage for preferences
+-  Clean, intuitive interface
 
 ## 🛠️ Tech Stack
 
@@ -69,7 +69,7 @@ npm run build
 npm run preview
 ```
 
-## 📱 Mobile App
+##  Mobile App
 
 ### PWA Installation
 1. Visit the deployed site on your mobile browser
@@ -84,13 +84,13 @@ The Android APK is automatically built via GitHub Actions when code is pushed to
 3. Download the `InkStream.apk` artifact
 4. Install on your Android device
 
-## 🔞 Adult Content (Manhwa 18+)
+##  Adult Content (Manhwa 18+)
 
 InkStream includes a dedicated section for adult Korean manhwa with proper safeguards:
 
 
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 manga-app/
@@ -110,7 +110,7 @@ manga-app/
 └── .github/workflows/     # GitHub Actions (APK build)
 ```
 
-## 🔧 Available Scripts
+##  Available Scripts
 
 | Command | Description |
 |---------|-------------|
@@ -121,7 +121,7 @@ manga-app/
 | `npm run android:sync` | Sync Capacitor with Android |
 | `npm run android:build` | Build Android project |
 
-## 🌐 Deployment
+##  Deployment
 
 ### Vercel (Recommended)
 1. Connect your GitHub repository to Vercel
@@ -131,7 +131,7 @@ manga-app/
 ### Environment Variables
 No environment variables required - the app uses public APIs.
 
-## 🙏 Credits
+##  Credits
 
 ### API
 - **MangaDex** - Manga/Manhwa data and images
@@ -147,11 +147,11 @@ No environment variables required - the app uses public APIs.
 - Vite for lightning-fast builds
 - Capacitor for native mobile support
 
-## 📄 License
+##  License
 
 This project is for educational purposes. Please respect MangaDex's terms of service and the rights of manga creators and publishers.
 
-## 📄 License
+##  License
 
 This project is for **educational and demonstration purposes only**.
 
@@ -177,7 +177,7 @@ This project demonstrates:
 
 For detailed legal information, see [LEGAL.md](LEGAL.md) and [TERMS.md](TERMS.md).
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
