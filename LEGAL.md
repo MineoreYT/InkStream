@@ -41,7 +41,7 @@ By using this application, users acknowledge that:
 If you are a copyright holder and believe your content is being used inappropriately:
 - Contact us immediately for content removal
 - We will respond promptly to legitimate takedown requests
-- Email: [Your Contact Email]
+- Email: [jesukoanateno@gmail.com]
 
 ### Limitation of Liability
 - This application is provided "as is" without warranties
@@ -51,4 +51,4 @@ If you are a copyright holder and believe your content is being used inappropria
 
 ---
 
-**Last Updated**: December 2024
+**Last Updated**: December 2025
