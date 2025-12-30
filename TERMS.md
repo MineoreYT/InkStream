@@ -49,8 +49,8 @@ We reserve the right to:
 These terms are governed by applicable copyright and intellectual property laws.
 
 ### Contact
-For questions about these terms: [Your Contact Email]
+For questions about these terms : [jesukoanateno@gmail.com]
 
 ---
 
-**Effective Date**: December 2024
+**Effective Date**: December 2025
