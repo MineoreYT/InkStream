@@ -12,7 +12,7 @@ A modern manga and adult Korean manhwa reading application built with React, Vit
 - 📂 Category-based browsing
 - 📖 Full-screen reader with keyboard navigation
 - 🔄 Auto-scroll to top when changing pages/chapters
-- 🔞 Adult Korean manhwa section (18+)
+
 
 ### 📱 Multi-Platform Support
 - 🌐 **Web App** - Works in any modern browser
@@ -88,19 +88,7 @@ The Android APK is automatically built via GitHub Actions when code is pushed to
 
 InkStream includes a dedicated section for adult Korean manhwa with proper safeguards:
 
-### Features
-- **Age Verification** - Users must confirm 18+ to access
-- **Content Warnings** - Clear warnings about mature content
-- **Language Notice** - Some chapters may not be in English
-- **Real MangaDex Data** - Fetches actual adult manhwa from MangaDex API
 
-### Content Ratings
-| Rating | Badge | Description |
-|--------|-------|-------------|
-| Safe | - | General audiences |
-| Suggestive | S | Mild suggestive themes |
-| Erotica | 18+ | Adult content with nudity |
-| Pornographic | 🔞 | Explicit adult content |
 
 ## 📁 Project Structure
 
@@ -162,6 +150,32 @@ No environment variables required - the app uses public APIs.
 ## 📄 License
 
 This project is for educational purposes. Please respect MangaDex's terms of service and the rights of manga creators and publishers.
+
+## 📄 License
+
+This project is for **educational and demonstration purposes only**.
+
+### Copyright Disclaimer
+- All manga/manhwa content belongs to their respective copyright holders
+- This application does not claim ownership of any displayed content
+- Content is sourced through the public MangaDx API
+- No copyright infringement is intended
+
+### Educational Use
+This project demonstrates:
+- Modern React development techniques
+- Progressive Web App (PWA) implementation
+- Mobile app development with Capacitor
+- API integration and proxy implementation
+- Responsive design with Tailwind CSS
+
+### Legal Compliance
+- **Not for commercial use** - This is a non-commercial educational project
+- **DMCA Compliant** - We respond to legitimate takedown requests
+- **User Responsibility** - Users must comply with local copyright laws
+- **Age Verification** - Proper safeguards for adult content
+
+For detailed legal information, see [LEGAL.md](LEGAL.md) and [TERMS.md](TERMS.md).
 
 ## 🤝 Contributing
 

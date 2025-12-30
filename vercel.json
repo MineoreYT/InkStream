@@ -45,11 +45,23 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "X-Educational-Use",
+          "value": "This is an educational demonstration project"
         }
       ]
     }
   ],
   "rewrites": [
+    {
+      "source": "/LEGAL.md",
+      "destination": "/LEGAL.md"
+    },
+    {
+      "source": "/TERMS.md", 
+      "destination": "/TERMS.md"
+    },
     {
       "source": "/((?!api/).*)",
       "destination": "/index.html"

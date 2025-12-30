@@ -4,6 +4,8 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { NSFWProvider } from './contexts/NSFWContext';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
+import Footer from './components/Footer';
+import LegalNotice from './components/LegalNotice';
 import InstallPrompt from './components/InstallPrompt';
 import HomePage from './pages/HomePage';
 import MangaDetail from './pages/MangaDetail';
@@ -70,8 +72,14 @@ function App() {
                     </Routes>
                   </div>
                   
+                  {/* Footer */}
+                  <Footer />
+                  
                   {/* PWA Install Prompt */}
                   <InstallPrompt />
+                  
+                  {/* Legal Notice Modal */}
+                  <LegalNotice />
                 </main>
               </div>
             } />

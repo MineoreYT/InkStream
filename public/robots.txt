@@ -1,0 +1,17 @@
+# Educational/Demo Project - Limited Crawling
+User-agent: *
+Disallow: /manhwa
+Disallow: /nsfw
+Disallow: /read/
+Disallow: /manga/manhwa18/
+
+# Allow educational pages
+Allow: /
+Allow: /LEGAL.md
+Allow: /TERMS.md
+
+# Crawl delay to be respectful
+Crawl-delay: 10
+
+# Sitemap (if you create one)
+# Sitemap: https://your-domain.com/sitemap.xml
