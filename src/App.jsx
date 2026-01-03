@@ -20,6 +20,9 @@ import FavoritesPage from './pages/FavoritesPage';
 import ReadingListPage from './pages/ReadingListPage';
 import ManhwaDetail from './pages/ManhwaDetail';
 import ManhwaPage from './pages/ManhwaPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
+import LegalPage from './pages/LegalPage';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -38,21 +41,21 @@ function App() {
             {/* Full-screen manga reader routes */}
             <Route path="/read/:source/:mangaId/:chapterId" element={<MangaReaderMultiSource />} />
             <Route path="/read/:mangaId/:chapterId" element={<MangaReader />} />
-            
+
             {/* Regular app layout routes */}
             <Route path="/*" element={
               <div className="min-h-screen bg-gray-50">
                 <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
                 <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-                
+
                 {/* Overlay for mobile */}
                 {sidebarOpen && (
-                  <div 
+                  <div
                     className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
                     onClick={handleOverlayClick}
                   />
                 )}
-                
+
                 <main className={`transition-all duration-300 pt-16 sm:pt-20 ${sidebarOpen ? 'lg:ml-64' : 'ml-0'}`}>
                   <div className="p-4 sm:p-6">
                     <Routes>
@@ -68,16 +71,19 @@ function App() {
                       <Route path="/nsfw" element={<NSFWPage />} />
                       <Route path="/favorites" element={<FavoritesPage />} />
                       <Route path="/reading-list" element={<ReadingListPage />} />
+                      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                      <Route path="/terms" element={<TermsOfServicePage />} />
+                      <Route path="/legal" element={<LegalPage />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </div>
-                  
+
                   {/* Footer */}
                   <Footer />
-                  
+
                   {/* PWA Install Prompt */}
                   <InstallPrompt />
-                  
+
                   {/* Legal Notice Modal */}
                   <LegalNotice />
                 </main>
