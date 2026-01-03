@@ -29,6 +29,14 @@ const Footer = () => {
                 <FileText size={14} />
                 Terms of Service
               </a>
+              <a 
+                href="/PRIVACY.md" 
+                target="_blank"
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+              >
+                <FileText size={14} />
+                Privacy Policy
+              </a>
             </div>
           </div>
 
