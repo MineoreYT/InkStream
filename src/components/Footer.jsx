@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { FileText, Shield, AlertTriangle, ExternalLink } from 'lucide-react';
 
 const Footer = () => {
@@ -13,27 +14,27 @@ const Footer = () => {
               Legal Information
             </h3>
             <div className="space-y-2 text-sm">
-              <a
-                href="/legal"
+              <Link
+                to="/legal"
                 className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
               >
                 <FileText size={14} />
                 Copyright Disclaimer
-              </a>
-              <a
-                href="/terms"
+              </Link>
+              <Link
+                to="/terms"
                 className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
               >
                 <FileText size={14} />
                 Terms of Service
-              </a>
-              <a
-                href="/privacy"
+              </Link>
+              <Link
+                to="/privacy"
                 className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
               >
                 <FileText size={14} />
                 Privacy Policy
-              </a>
+              </Link>
             </div>
           </div>
 
