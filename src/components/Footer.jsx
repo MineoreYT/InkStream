@@ -28,7 +28,7 @@ const Footer = () => {
                 Terms of Service
               </a>
               <a
-                href="/privacy"
+                href="./context/TermsOfServicePage"
                 className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
               >
                 <FileText size={14} />

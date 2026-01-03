@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { mangadexApi } from '../services/mangadexApi';
+import { useNSFW } from '../contexts/NSFWContext';
 import { Loader2, AlertCircle, Calendar, User, BookOpen, Star, Play } from 'lucide-react';
 
 const MangaDetail = () => {
   const { id } = useParams();
+  const { includeNSFW } = useNSFW();
   const [manga, setManga] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,7 @@ const MangaDetail = () => {
         setLoading(true);
         const [mangaData, chaptersData] = await Promise.all([
           mangadexApi.getMangaById(id),
-          mangadexApi.getMangaChapters(id),
+          mangadexApi.getMangaChapters(id, 100, 0, includeNSFW),
         ]);
         
         setManga(mangaData.data);
@@ -248,9 +250,14 @@ const MangaDetail = () => {
                     Chapter {chapter.attributes?.chapter || 'Unknown'}
                     {chapter.attributes?.title && `: ${chapter.attributes.title}`}
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    {chapter.attributes?.pages} pages
-                  </p>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <span>{chapter.attributes?.pages} pages</span>
+                    {chapter.attributes?.translatedLanguage && (
+                      <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                        {chapter.attributes.translatedLanguage.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="text-sm text-gray-500">
                   {new Date(chapter.attributes?.publishAt).toLocaleDateString()}

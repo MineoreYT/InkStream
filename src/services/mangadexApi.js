@@ -80,7 +80,7 @@ export const mangadexApi = {
   },
 
   // Get latest manga
-  getLatestManga: async (limit = 20, offset = 0, includeNSFW = false) => {
+  getLatestManga: async (limit = 20, offset = 0, includeNSFW = true) => {
     try {
       const contentRatings = includeNSFW 
         ? ['safe', 'suggestive', 'erotica', 'pornographic']
@@ -165,16 +165,23 @@ export const mangadexApi = {
   },
 
   // Get manga chapters
-  getMangaChapters: async (mangaId, limit = 100, offset = 0) => {
+  getMangaChapters: async (mangaId, limit = 100, offset = 0, includeNSFW = true) => {
     try {
+      const contentRatings = includeNSFW 
+        ? ['safe', 'suggestive', 'erotica', 'pornographic']
+        : ['safe', 'suggestive'];
+        
+      // Only get English chapters
       const params = {
         manga: mangaId,
         limit,
         offset,
         'order[chapter]': 'asc',
-        'translatedLanguage[]': 'en',
+        'translatedLanguage[]': 'en', // Only English
         'includes[]': ['scanlation_group'],
+        'contentRating[]': contentRatings,
       };
+      
       const response = await makeApiRequest('/chapter', params);
       return response.data;
     } catch (error) {

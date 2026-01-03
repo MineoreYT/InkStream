@@ -14,7 +14,7 @@ const SOURCE_CONFIG = {
     name: 'MangaDx',
     description: 'High-quality manga from MangaDx',
     api: mangadexApi,
-    isAdult: false,
+    isAdult: true,
     icon: '📚',
     color: '#ff6b35'
   },
